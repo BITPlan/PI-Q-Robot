@@ -135,8 +135,9 @@ class Part extends ChildPart {
 
 // a robot consists of a name and a list of parts
 class Robot {
-  constructor(name, parts) {
+  constructor(name, url,parts) {
     this.name = name;
+    this.url = url;
     this.parts = parts;
   }
   static fromJsonObj(robotObj) {
@@ -145,7 +146,7 @@ class Robot {
       var partJsonObj = robotObj.parts[partsIndex];
       parts.push(Part.fromJsonObj(partJsonObj));
     }
-    var robot = new Robot(robotObj.name, parts);
+    var robot = new Robot(robotObj.name,robotObj.url,parts);
     return robot;
   }
 

@@ -1,5 +1,6 @@
 {
   "name": "SpiderQ",
+  "url": "https://github.com/BITPlan/PI-Q-Robot/tree/master/web/models/stl",
   "parts": [{
       "name": "body",
       "x": 0,
