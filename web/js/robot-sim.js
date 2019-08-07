@@ -37,9 +37,6 @@ var options = {
   zoom: 1,
   controls: true,
   rotation: true,
-  coxa: 90,
-  tibia: 5,
-  femur: 0,
   x: 0,
   y: 0,
   z: 0,
@@ -79,9 +76,6 @@ gui.add(options, 'rotation').listen();
 gui.add(options, 'px', -200, 200).listen();
 gui.add(options, 'py', -200, 200).listen();
 gui.add(options, 'pz', -200, 200).listen();
-gui.add(options, 'coxa', -180, 180).listen();
-gui.add(options, 'femur', -180, 180).listen();
-gui.add(options, 'tibia', -180, 180).listen();
 gui.add(options, 'selected').listen();
 posFolder = gui.addFolder('position')
 posFolder.add(options, 'x', -200, 200).listen();
@@ -141,6 +135,8 @@ urlParams.forEach((value, key) => {
   }
 });
 
+var robot=null;
+
 if (typeof robotUrl === "undefined") {
   alert('missing robot json definition - robotUrl is undefined');
 } else {
@@ -150,7 +146,9 @@ if (typeof robotUrl === "undefined") {
     .then((robotObj) => {
       console.log('Checkout this JSON! ', robotObj);
       robot = Robot.fromJsonObj(robotObj);
-      robot.loadParts(scene);
+      robot.loadParts(scene,function whenIntegrated() {
+        robot.addGUI(gui,options);
+      });
     })
     .catch(err => {
       throw err
@@ -161,23 +159,8 @@ var render = function() {
   // https://stackoverflow.com/questions/19426559/three-js-access-scene-objects-by-name-or-id
 
   if (options.rotation) {
-    // Rotate joints
-    for (leg = 0; leg <= 3; leg++) {
-      coxa = scene.getObjectByName('coxagroup' + leg);
-      if (coxa) {
-        coxa.setRotationFromAxisAngle(yAxis, deg2rad(options.coxa));
-      }
-      femur = scene.getObjectByName('femurgroup' + leg);
-      if (femur)
-        femur.setRotationFromAxisAngle(xAxis, deg2rad(options.femur));
-      tibia = scene.getObjectByName('tibiagroup' + leg);
-      if (tibia) {
-        // tibia.setRotationFromAxisAngle(xAxis, deg2rad(options.tibia));
-        tibia.rotation.x = deg2rad(options.tibia);
-        // var point=tibia.position;
-        // tibia.rotateAroundWorldAxis(point,xAxis,deg2rad(1));
-      }
-    }
+    if (robot)
+      robot.rotateJoints(scene);
   }
   movep = selectedObject;
   if (movep) {

@@ -9,6 +9,7 @@
       "rx": 0,
       "ry": 90,
       "rz": 0,
+      "joint": 0,
       "stl": "https://cdn.thingiverse.com/assets/be/97/2c/15/10/Pi%C3%A8ce1.STL"
     },
     {
@@ -19,6 +20,7 @@
       "rx": 0,
       "ry": 0,
       "rz": 0,
+
       "parts": [{
           "name": "Piece 2 top",
           "x": -34,
@@ -49,6 +51,7 @@
       "rx": 0,
       "ry": 270,
       "rz": 0,
+      "joint": 0,
       "stl": "https://cdn.thingiverse.com/assets/a0/ac/59/22/c7/Pi%C3%A8ce3.STL"
     }
   ]
