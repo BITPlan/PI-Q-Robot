@@ -15,11 +15,12 @@
     {
       "name": "Piece 2",
       "x": 0,
-      "y": 0,
+      "y": 50,
       "z": 0,
       "rx": 0,
       "ry": 0,
       "rz": 0,
+      "joint": 90,
 
       "parts": [{
           "name": "Piece 2 top",

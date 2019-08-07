@@ -37,6 +37,10 @@ var options = {
   zoom: 1,
   controls: true,
   rotation: true,
+  rotateX: false,
+  rotateY: false,
+  rotateZ: false,
+  byAxis: true,
   x: 0,
   y: 0,
   z: 0,
@@ -73,6 +77,10 @@ infoFolder.add(options, 'screenheight').listen();
 gui.add(options, 'zoom', 0.1, 10).listen();
 gui.add(options, 'controls').listen();
 gui.add(options, 'rotation').listen();
+gui.add(options, 'rotateX').listen();
+gui.add(options, 'rotateY').listen();
+gui.add(options, 'rotateZ').listen();
+gui.add(options, 'byAxis').listen();
 gui.add(options, 'px', -200, 200).listen();
 gui.add(options, 'py', -200, 200).listen();
 gui.add(options, 'pz', -200, 200).listen();
@@ -160,7 +168,7 @@ var render = function() {
 
   if (options.rotation) {
     if (robot)
-      robot.rotateJoints(scene);
+      robot.rotateJoints(scene,options);
   }
   movep = selectedObject;
   if (movep) {

@@ -146,7 +146,13 @@ var oldColor;
 
 // log that an object has been seleted / unselected
 function logSelected(prefix,selectedObject) {
-  console.log(prefix+" "+selectedObject.uuid + "position: "+JSON.stringify(selectedObject.position)+ " color: "+JSON.stringify(selectedObject.material.color));
+  var color="?";
+  if (typeof selectedObject.material !== "undefined" ) {
+    color=JSON.stringify(selectedObject.material.color);
+  }
+  var position=" position: "+JSON.stringify(selectedObject.position);
+  var rotation=" rotation: "+JSON.stringify(selectedObject.rotation);
+  console.log(prefix+" "+selectedObject.name+"("+selectedObject.uuid + ")" + position + rotation + " color: "+color);
   // console.log(prefix+" oldcolor:"+JSON.stringify(oldColor)+" oldSelected:"+JSON.stringify(oldSelected));
 }
 
@@ -205,7 +211,7 @@ function onDocumentMouseDown(event) {
  *
  */
 function onWindowResize() {
-  var width=renderer.domElement.parentNode.offsetWidth; // window.innerWidth;  
+  var width=renderer.domElement.parentNode.offsetWidth; // window.innerWidth;
   var height=window.innerHeight; //renderer.domElement.parentNode.offsetHeight;
   camera.aspect = width/height;
   camera.updateProjectionMatrix();

@@ -129,6 +129,8 @@ class Part extends ChildPart {
 
   integrateChild(childPart) {
     console.log("adding " + childPart.name + " to " + this.name);
+    // https://stackoverflow.com/a/26413121/1497139
+    // this.mesh.attach(childPart.mesh);
     this.mesh.add(childPart.mesh);
     this.mesh.updateMatrixWorld(); // important !
     childPart.mesh.applyMatrix(new THREE.Matrix4().getInverse(this.mesh.matrixWorld))
@@ -158,6 +160,7 @@ class Robot {
     this.parts = parts;
     this.whenIntegrated = null;
     this.partsIntegrated = 0;
+    this.rotateCounter = 0;
     // make sure my parts know me
     for (var partIndex in parts) {
       parts[partIndex].robot = this;
@@ -203,7 +206,7 @@ class Robot {
     console.log("preparing gui rendering options for " + this.name)
     for (var partsIndex in this.parts) {
       var part = this.parts[partsIndex];
-      if (part.joint!==null) {
+      if (part.joint !== null) {
         options[part.name] = part.joint;
         // TODO make range configurable
         gui.add(options, part.name, -180, 180).listen();
@@ -212,15 +215,36 @@ class Robot {
   }
 
   // rotate the Joints of this robot
-  rotateJoints(scene) {
+  rotateJoints(scene, options) {
     // Rotate joints
     for (var partsIndex in this.parts) {
       var part = this.parts[partsIndex];
-      if (part.joint!==null) {
+      if (part.joint !== null) {
         var mesh = scene.getObjectByName(part.name);
         if (mesh) {
           var angle = options[part.name];
-          mesh.setRotationFromAxisAngle(yAxis, deg2rad(angle));
+          // be careful when uncommenting this for debugging - this is triggered on every render request
+          // at the fps your computer is capable of
+          this.rotateCounter++;
+          if (this.rotateCounter % 50 == 0)
+            logSelected("preRotate", mesh);
+          if (options.byAxis) {
+            if (options.rotateX)
+              mesh.setRotationFromAxisAngle(xAxis, deg2rad(angle));
+            if (options.rotateY)
+              mesh.setRotationFromAxisAngle(yAxis, deg2rad(angle));
+            if (options.rotateZ)
+              mesh.setRotationFromAxisAngle(zAxis, deg2rad(angle));
+          } else {
+            if (options.rotateX)
+              mesh.rotation.x = deg2rad(angle);
+            if (options.rotateY)
+              mesh.rotation.y = deg2rad(angle);
+            if (options.rotateZ)
+              mesh.rotation.z = deg2rad(angle);
+          }
+          if (this.rotateCounter % 50 == 0)
+            logSelected("postRotate", mesh);
         }
       }
     }
