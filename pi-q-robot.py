@@ -9,10 +9,13 @@ import time
 import yaml
 import platform
 import os.path
+
+# check if we are running on a raspberry PI
+# https://raspberrypi.stackexchange.com/questions/5100/detect-that-a-python-program-is-running-on-the-pi
 print("Running on %s" % (platform.system()))
 
 # prepare the adafruit servo access
-if platform.system() == 'Linux':
+if platform.system() == 'Linux' and os.path.exists('/sys/firmware/devicetree/base/model'):
     from adafruit_servokit import ServoKit
     kit = ServoKit(channels=16)
 else:
