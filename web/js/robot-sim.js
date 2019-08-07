@@ -14,15 +14,6 @@ scene.add(axesHelper);
 var camera = createCamera(near, far);
 
 // var controls = new THREE.OrbitControls( camera );
-// container= document.getElementById('spider')
-// Renderer
-//width=container.width()
-// height=container.height()
-// window.innerWidth, window.innerHeight
-var renderer = createRenderer(window.innerWidth, window.innerHeight);
-// renderer.setSize(window.innerWidth, window.innerHeight);
-var renderer = createRenderer(window.innerWidth, window.innerHeight);
-// renderer.setSize(window.innerWidth, window.innerHeight);
 
 // https://www.w3schools.com/colors/colors_picker.asp
 var light0 = new THREE.HemisphereLight(0x443333, 0x111122);
@@ -117,12 +108,23 @@ var zAxis = new THREE.Vector3(0, 0, 1);
 var yAxis = new THREE.Vector3(0, 1, 0);
 var xAxis = new THREE.Vector3(1, 0, 0);
 
+// prepare Renderer
+var renderContainer=document.body;
+var renderWidth=window.innerWidth;
+var renderHeight=window.innerHeight;
+
 // are we configured to run in dom element e.g. div?
 if (typeof renderId !== 'undefined') {
-  var renderDiv = document.getElementById(renderId);
-  renderDiv.appendChild(renderer.domElement);
-} else
-  document.body.appendChild(renderer.domElement);
+  renderContainer= document.getElementById(renderId);
+  renderWidth=renderContainer.offsetWidth;
+  renderHeight=renderContainer.offsetHeight;
+  if (renderHeight==0)
+    renderHeight=window.innerHeight;
+}
+console.log("creating "+renderWidth+" x "+renderHeight+" renderer")
+var renderer = createRenderer(renderWidth,renderHeight);
+renderContainer.appendChild(renderer.domElement);
+
 controls = createControls();
 camera.position.set(options.camerax, options.cameray, options.cameraz);
 

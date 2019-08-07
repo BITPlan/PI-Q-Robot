@@ -201,10 +201,15 @@ function onDocumentMouseDown(event) {
   }
 }
 
+/**
+ *
+ */
 function onWindowResize() {
-  camera.aspect = window.innerWidth / window.innerHeight;
+  var width=renderer.domElement.parentNode.offsetWidth; // window.innerWidth;  
+  var height=window.innerHeight; //renderer.domElement.parentNode.offsetHeight;
+  camera.aspect = width/height;
   camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(width,height);
 }
 
 function addListeners() {

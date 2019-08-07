@@ -9,8 +9,9 @@
         <button name="action" type="submit" value="{{ action }}">{{ action }}</button>
       </form>
       {% endfor %}
+      <pre>{{ message }}</pre>
     </div>
-    <div id='spider' class="col-md-10">
+    <div id='spider' class="h-100 col-md-10">
       <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/107/three.min.js'></script>
       <script src='https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.6/dat.gui.min.js'></script>
       <script src='/js/libs/stats.min.js'></script>
@@ -27,5 +28,4 @@
       <script src='/js/robot-sim.js'></script>
     </div>
   </div>
-  <pre>{{ message }}</pre>
   {% include 'footer.html' %}
