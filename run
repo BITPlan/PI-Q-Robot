@@ -1,0 +1,52 @@
+#!/bin/bash
+export PYTHONPATH=""
+
+#
+# open the given url waiting for the given number of seconds
+#
+# param #1: the url to open
+# param #2: the number of loops to wait
+# param #3: the sleep time per loop
+openUrl() {
+  local l_url="$1"
+  local l_loops="$2"
+  local l_sleep="$3"
+  local l_count=1
+  local l_done=0
+  until [ $l_done -eq 1 ]
+  do
+    l_count=$((l_count+1))
+    if [ "$l_count" -ge "$l_loops" ]
+    then
+      echo "giving up to wait for $l_url"
+      l_done=1
+    fi
+    status=$(curl -Is $l_url | head -1)
+    echo "waiting $l_count/$l_loops for $l_url: $status"
+    case $status in
+      *200*OK*) open $l_url
+        l_done="1" ;;
+    esac
+    sleep $l_sleep
+  done
+}
+
+#
+# kill the given process by name if it is running
+#
+# param #1: l_name: the name to search for
+killifrunning() {
+  local l_name="$1"
+  pgrep -fl "$l_name"
+  if [ $? -eq 0 ]
+  then
+    echo "killing running $l_name server"
+    sudo pkill -f "$l_name"
+  fi
+}
+
+pyapp=pi-q-robot.py
+killifrunning $pyapp
+port=5002
+openUrl "http://localhost:$port" 60 0.5&
+sudo python3 $pyapp

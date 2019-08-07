@@ -1,0 +1,31 @@
+{% include 'header.html' %}
+{% include 'menu.html' %}
+<div id='navigationbox' title='PI-Q-Robot'>PI-Q-Robot - Raspberry PI controlled quadruped Spiderbot</div>
+<div class='container-fluid' id='contentbox'>
+  <div class='row'>
+    <div class="col-md-2">
+      {% for action in actions %}
+      <form action="/action" method="post">
+        <button name="action" type="submit" value="{{ action }}">{{ action }}</button>
+      </form>
+      {% endfor %}
+    </div>
+    <div id='spider' class="col-md-10">
+      <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/107/three.min.js'></script>
+      <script src='https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.6/dat.gui.min.js'></script>
+      <script src='/js/libs/stats.min.js'></script>
+      <script src='/js/controls/TrackballControls.js'></script>
+      <script src='/js/controls/DragControls.js'></script>
+      <script src='/js/STLLoader.js'></script>
+      <script src='/js/three_basics.js'></script>
+      <script src='/js/robot.js'></script>
+      <script>
+        // configure robot-simulation
+        var renderId='spider';
+        var robotUrl='/models/spiderq.json';
+      </script>
+      <script src='/js/robot-sim.js'></script>
+    </div>
+  </div>
+  <pre>{{ message }}</pre>
+  {% include 'footer.html' %}

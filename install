@@ -1,0 +1,19 @@
+#!/bin/bash
+# WF 2019-07-27
+# install pre requisites
+
+# install python3-yaml
+# install required modules
+os=$(uname -a)
+case $os in
+  Darwin*) 
+   pip="sudo -H pip"
+   install="sudo port install"
+   ;;
+  *) 
+   pip="pip3"
+   install="sudo apt-get install" 
+   ;;
+esac
+$install python3-yaml
+$pip install -r requirements.txt
