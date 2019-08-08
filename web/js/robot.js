@@ -60,9 +60,9 @@ class ChildPart {
 
     // callback when an error happens on loading
     function onError(e) {
-      console.log("JSONLoader for " + part.name + " failed! because of error " + e);
+      console.log("JSONLoader for " + part.name + "(" + part.stl + ") failed! because of error " + e);
       if (typeof e.target !== "undefined") {
-        console.log("\t" + e.target.status + ", " + e.target.statusText);
+        console.log("\tstatus:" + e.target.status + ", text:'" + e.target.statusText+"'");
       }
       // flag the error for the part
       part.error = e;
