@@ -64,7 +64,7 @@ class ChildPart {
         console.log("\t" + e.target.status + ", " + e.target.statusText);
       }
       // flag the error for the part
-      part.error=e;
+      part.error = e;
     }
 
     function onProgress() {
@@ -112,19 +112,23 @@ class ChildPart {
   }
 }
 
+// a part that can have subparts
 class Part extends ChildPart {
+  // construct me with the given name, stl url, position x,y,z and rotation rx,ry,rz
   constructor(name, stl, x, y, z, rx, ry, rz) {
     super(name, stl, x, y, z, rx, ry, rz);
     // attributes to be configured later
     this.parts = [];
     this.partsIntegrated = 0;
   }
-  // allow a hierarchy of parts to be loaded
+
+  // construct a part from the given Json Object allowing a hierachy of parts to be created
   static fromJsonObj(partJsonObj) {
     var part = new Part(partJsonObj.name, partJsonObj.stl, partJsonObj.x, partJsonObj.y, partJsonObj.z, partJsonObj.rx, partJsonObj.ry, partJsonObj.rz);
     if (typeof partJsonObj.joint !== "undefined") {
       part.joint = partJsonObj.joint;
     }
+    // are there any subparts?
     if (typeof partJsonObj.parts !== "undefined") {
       for (var partsIndex in partJsonObj.parts) {
         var subPartJsonObj = partJsonObj.parts[partsIndex];
@@ -136,13 +140,16 @@ class Part extends ChildPart {
     return part;
   }
 
+  // integrate the given childPart after it has been loaded
   integrateChild(childPart) {
     console.log("adding " + childPart.name + " to " + this.name);
     // https://stackoverflow.com/a/26413121/1497139
     // this.mesh.attach(childPart.mesh);
     this.mesh.add(childPart.mesh);
+
     this.mesh.updateMatrixWorld(); // important !
     childPart.mesh.applyMatrix(new THREE.Matrix4().getInverse(this.mesh.matrixWorld))
+
     this.partsIntegrated++;
     if (this.partsIntegrated == this.parts.length) {
       console.log("all " + this.partsIntegrated + " child parts of " + this.name + " integrated")
@@ -168,6 +175,8 @@ class Robot {
     this.name = name;
     this.url = url;
     this.parts = parts;
+    // set to true to debug
+    this.debug = false;
     // fields to be used later
     this.whenIntegrated = null;
     this.partsIntegrated = 0;
@@ -246,8 +255,9 @@ class Robot {
           // be careful when uncommenting this for debugging - this is triggered on every render request
           // at the fps your computer is capable of
           this.rotateCounter++;
-          if (this.rotateCounter % 50 == 0)
-            logSelected("preRotate", mesh);
+          if (this.debug)
+            if (this.rotateCounter % 50 == 0)
+              logSelected("preRotate", mesh);
           if (options.byAxis) {
             if (options.rotateX)
               mesh.setRotationFromAxisAngle(xAxis, deg2rad(angle));
@@ -263,8 +273,9 @@ class Robot {
             if (options.rotateZ)
               mesh.rotation.z = deg2rad(angle);
           }
-          if (this.rotateCounter % 50 == 0)
-            logSelected("postRotate", mesh);
+          if (this.debug)
+            if (this.rotateCounter % 50 == 0)
+              logSelected("postRotate", mesh);
         }
       }
     }

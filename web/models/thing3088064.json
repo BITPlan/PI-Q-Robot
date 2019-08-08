@@ -7,20 +7,30 @@
       "y": 122,
       "z": 123,
       "rx": 0,
-      "ry": 90,
+      "ry": 0,
       "rz": 0,
       "joint": 0,
-      "stl": "https://cdn.thingiverse.com/assets/be/97/2c/15/10/Pi%C3%A8ce1.STL"
+
+      "parts": [{
+        "name": "Piece 1 part",
+        "x": -102,
+        "y": 122,
+        "z": 123,
+        "rx": 0,
+        "ry": 90,
+        "rz": 0,
+        "stl": "https://cdn.thingiverse.com/assets/be/97/2c/15/10/Pi%C3%A8ce1.STL"
+      }]
     },
     {
       "name": "Piece 2",
-      "x": 0,
-      "y": 50,
-      "z": 0,
+      "x": -34,
+      "y": 148,
+      "z": 127,
       "rx": 0,
       "ry": 0,
       "rz": 0,
-      "joint": 90,
+      "joint": 0,
 
       "parts": [{
           "name": "Piece 2 top",
@@ -43,17 +53,26 @@
           "stl": "https://cdn.thingiverse.com/assets/15/4b/e0/8a/f5/Pi%C3%A8ce2.STL"
         }
       ]
-    },
-    {
+    }, {
       "name": "Piece 3",
       "x": 0,
       "y": 125,
       "z": 123,
       "rx": 0,
-      "ry": 270,
+      "ry": 0,
       "rz": 0,
       "joint": 0,
-      "stl": "https://cdn.thingiverse.com/assets/a0/ac/59/22/c7/Pi%C3%A8ce3.STL"
+
+      "parts": [{
+        "name": "Piece 3 part",
+        "x": 0,
+        "y": 125,
+        "z": 123,
+        "rx": 0,
+        "ry": 270,
+        "rz": 0,
+        "stl": "https://cdn.thingiverse.com/assets/a0/ac/59/22/c7/Pi%C3%A8ce3.STL"
+      }]
     }
   ]
 }
