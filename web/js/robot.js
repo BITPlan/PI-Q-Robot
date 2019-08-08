@@ -15,6 +15,7 @@ class ChildPart {
     this.parent = null;
     this.mesh = null;
     this.error = null;
+    this.showProgress = false;
   }
 
   setPositions(scene, name, x, y, z) {
@@ -68,8 +69,15 @@ class ChildPart {
     }
 
     // callback for on progress
-    function onProgress(url,itemsLoaded,itemsTotal) {
-      console.log("JSONLoader for "+part.name + " from "+url+" in progress "+itemsLoaded+"/"+itemsTotal);
+    function onProgress(xhr) {
+      if (part.showProgress) {
+        // https://stackoverflow.com/a/38782996/1497139
+        if (xhr.lengthComputable) {
+          var percentComplete = xhr.loaded / xhr.total * 100;
+          var percentDone = Math.round(percentComplete, 2);
+          console.log("JSONLoader for " + part.name + " " + percentDone + " % done");
+        }
+      }
     }
 
     function onLoad(geometry) {
