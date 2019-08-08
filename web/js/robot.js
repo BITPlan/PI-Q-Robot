@@ -9,11 +9,12 @@ class ChildPart {
     this.rx = rx;
     this.ry = ry;
     this.rz = rz;
+    // create attributes to be used later
     this.joint = null;
-    // create attributes to initialized later
     this.robot = null;
     this.parent = null;
     this.mesh = null;
+    this.error = null;
   }
 
   setPositions(scene, name, x, y, z) {
@@ -56,11 +57,14 @@ class ChildPart {
       onCreate(mesh, msg);
     }
 
+    // callback when an error happens on loading
     function onError(e) {
       console.log("JSONLoader for " + part.name + " failed! because of error " + e);
       if (typeof e.target !== "undefined") {
         console.log("\t" + e.target.status + ", " + e.target.statusText);
       }
+      // flag the error for the part
+      part.error=e;
     }
 
     function onProgress() {
@@ -81,10 +85,13 @@ class ChildPart {
       onCreate(mesh, "loading from url " + url);
     }
 
+    // callback on creation of loaded mesh
     function onCreate(mesh, msg) {
       // add bidirectional references from mesh to part
       part.mesh = mesh;
+      // make the part available in the userdata of the mesh
       mesh.userData['part'] = part;
+      // rotate mesh as requested
       mesh.rotation.set(deg2rad(rx), deg2rad(ry), deg2rad(rz));
       // mesh.scale.set(0.5, 0.5, 0.5);
       mesh.castShadow = true;
@@ -98,7 +105,9 @@ class ChildPart {
     };
   }
 
+  // load me using the given scene and loader
   load(scene, loader) {
+    // call a function with parameters to avoid javascripts this.<field> mess
     this.addSTL(scene, loader, this.name, this.stl, this.x, this.y, this.z, this.rx, this.ry, this.rz, this.setPositions);
   }
 }
@@ -154,10 +163,12 @@ class Part extends ChildPart {
 
 // a robot consists of a name and a list of parts
 class Robot {
+  // construct me with the given name, url to my source (copyright) and array of parts
   constructor(name, url, parts) {
     this.name = name;
     this.url = url;
     this.parts = parts;
+    // fields to be used later
     this.whenIntegrated = null;
     this.partsIntegrated = 0;
     this.rotateCounter = 0;
@@ -167,31 +178,40 @@ class Robot {
     }
   }
 
+  // construct a Robot from the given JSON Object
   static fromJsonObj(robotObj) {
+    // first create the array of parts
     var parts = [];
     for (var partIndex in robotObj.parts) {
       var partJsonObj = robotObj.parts[partIndex];
       parts.push(Part.fromJsonObj(partJsonObj));
     }
+    // now call the constructor (which will add back pointers to the robot for each part)
     var robot = new Robot(robotObj.name, robotObj.url, parts);
     return robot;
   }
 
+  // construct a Robot from the given json String
   static fromJson(robotJson) {
+    // parse the JSON string
     var robotObj = JSON.parse(robotJson);
+    // construct Robot from the Json Object
     return fromJsonobj(robotObj);
   }
 
+  // load all my parts with the given scene and call the given whenIntegrated callback when done
   loadParts(scene, whenIntegrated) {
-    // remember the callback for finalizing the integration
+    // remember the callback for finalizing the integration - see integratePart
     this.whenIntegrated = whenIntegrated;
     var loader = new THREE.STLLoader();
     for (var partsIndex in this.parts) {
       var part = this.parts[partsIndex];
+      // integratePart will be called when finished
       part.load(scene, loader);
     }
   }
 
+  // finalize the loading of the given part - will call whenIntegrated when all parts have been integrated
   integratePart(part) {
     this.partsIntegrated++;
     if (this.partsIntegrated == this.parts.length) {

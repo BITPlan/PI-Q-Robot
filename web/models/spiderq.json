@@ -112,7 +112,7 @@
       ]
     },
     {
-      "name": "coxagroup0",
+      "name": "coxa0",
       "joint": 0,
       "x": -50,
       "y": 0,
@@ -121,7 +121,7 @@
       "ry": 0,
       "rz": 0,
       "parts": [{
-        "name": "coxa0",
+        "name": "coxapart0",
         "stl": "/models/stl/coxa-b.stl",
         "x": -56,
         "y": 77,
@@ -150,7 +150,7 @@
       }]
     },
     {
-      "name": "coxagroup1",
+      "name": "coxa1",
       "joint": 0,
       "x": 50,
       "y": 0,
@@ -159,7 +159,7 @@
       "ry": 0,
       "rz": 0,
       "parts": [{
-          "name": "coxa1",
+          "name": "coxapart1",
           "stl": "/models/stl/coxa-f.stl",
           "x": 56,
           "y": 77,
@@ -191,7 +191,7 @@
       ]
     },
     {
-      "name": "coxagroup2",
+      "name": "coxa2",
       "joint": 0,
       "x": -50,
       "y": 0,
@@ -200,7 +200,7 @@
       "ry": 0,
       "rz": 0,
       "parts": [{
-          "name": "coxa2",
+          "name": "coxapart2",
           "stl": "/models/stl/coxa-b.stl",
           "x": -61,
           "y": 77,
@@ -231,7 +231,7 @@
       ]
     },
     {
-      "name": "coxagroup3",
+      "name": "coxa3",
       "joint": 0,
       "x": 50,
       "y": 0,
@@ -240,7 +240,7 @@
       "ry": 0,
       "rz": 0,
       "parts": [{
-          "name": "coxa3",
+          "name": "coxapart3",
           "stl": "/models/stl/coxa-f.stl",
           "x": 61,
           "y": 77,
@@ -273,7 +273,7 @@
       ]
     },
     {
-      "name": "femurgroup0",
+      "name": "femur0",
       "joint": 0,
       "x": -80,
       "y": 0,
@@ -282,7 +282,7 @@
       "ry": 0,
       "rz": 0,
       "parts": [{
-        "name": "femur0",
+        "name": "femurpart0",
         "stl": "/models/stl/femur.stl",
         "x": -80,
         "y": 69,
@@ -291,42 +291,70 @@
         "ry": 180,
         "rz": 225
       }]
-    },
-    {
+    }, {
       "name": "femur1",
       "joint": 0,
-      "stl": "/models/stl/femur.stl",
       "x": 82,
-      "y": 69,
+      "y": 0,
       "z": -70,
-      "rx": 90,
-      "ry": 180,
-      "rz": 315
+      "rx": 0,
+      "ry": 0,
+      "rz": 0,
+      "parts": [{
+        "name": "femurpart1",
+        "joint": 0,
+        "stl": "/models/stl/femur.stl",
+        "x": 82,
+        "y": 69,
+        "z": -70,
+        "rx": 90,
+        "ry": 180,
+        "rz": 315
+      }]
     },
     {
       "name": "femur2",
       "joint": 0,
-      "stl": "/models/stl/femur.stl",
       "x": -82,
-      "y": 69,
-      "z": 70,
-      "rx": 90,
-      "ry": 180,
-      "rz": 315
-    },
-    {
+      "y": 0,
+      "z": -70,
+      "rx": 0,
+      "ry": 0,
+      "rz": 0,
+      "parts": [{
+        "name": "femurpart2",
+        "joint": 0,
+        "stl": "/models/stl/femur.stl",
+        "x": -82,
+        "y": 69,
+        "z": 70,
+        "rx": 90,
+        "ry": 180,
+        "rz": 315
+      }]
+    }, {
       "name": "femur3",
       "joint": 0,
-      "stl": "/models/stl/femur.stl",
       "x": 82,
-      "y": 69,
+      "y": 0,
       "z": 70,
-      "rx": 90,
-      "ry": 180,
-      "rz": 45
+      "rx": 0,
+      "ry": 0,
+      "rz": 0,
+      "parts": [{
+        "name": "femurpart3",
+        "joint": 0,
+        "stl": "/models/stl/femur.stl",
+        "x": 82,
+        "y": 69,
+        "z": 70,
+        "rx": 90,
+        "ry": 180,
+        "rz": 45
+      }]
     },
     {
-      "name": "tibiagroup0",
+      "name": "tibia0",
       "joint": 0,
       "x": -117,
       "y": 68.5,
@@ -335,7 +363,7 @@
       "ry": 0,
       "rz": 0,
       "parts": [{
-        "name": "tibia0",
+        "name": "tibiapart0",
         "stl": "/models/stl/tibia-b.stl",
         "x": -117,
         "y": 68.5,
@@ -364,7 +392,7 @@
       }]
     },
     {
-      "name": "tibiagroup1",
+      "name": "tibia1",
       "joint": 0,
       "x": 110,
       "y": 68.5,
@@ -373,7 +401,7 @@
       "ry": 0,
       "rz": 0,
       "parts": [{
-        "name": "tibia1",
+        "name": "tibiapart1",
         "stl": "/models/stl/tibia-b.stl",
         "x": 110,
         "y": 68.5,
@@ -401,7 +429,7 @@
         "rz": 0
       }]
     }, {
-      "name": "tibiagroup2",
+      "name": "tibia2",
       "joint": 0,
       "x": -122,
       "y": 68.5,
@@ -410,7 +438,7 @@
       "ry": 0,
       "rz": 0,
       "parts": [{
-          "name": "tibia2",
+          "name": "tibiapart2",
           "stl": "/models/stl/tibia-b.stl",
           "x": -122,
           "y": 68.5,
@@ -440,7 +468,7 @@
         }
       ]
     }, {
-      "name": "tibiagroup3",
+      "name": "tibia3",
       "joint": 0,
       "x": 122,
       "y": 68.5,
@@ -449,7 +477,7 @@
       "ry": 0,
       "rz": 0,
       "parts": [{
-          "name": "tibia3",
+          "name": "tibiapart3",
           "stl": "/models/stl/tibia-f.stl",
           "x": 122,
           "y": 68.5,
