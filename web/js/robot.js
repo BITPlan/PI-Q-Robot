@@ -67,8 +67,9 @@ class ChildPart {
       part.error = e;
     }
 
-    function onProgress() {
-
+    // callback for on progress
+    function onProgress(url,ItemsLoaded,itemsTotal) {
+      console.log("JSONLoader for "+part.name + " from "+url+" in progress "+itemsLoaded+"/"+itemsTotal);
     }
 
     function onLoad(geometry) {
