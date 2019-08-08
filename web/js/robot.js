@@ -68,7 +68,7 @@ class ChildPart {
     }
 
     // callback for on progress
-    function onProgress(url,ItemsLoaded,itemsTotal) {
+    function onProgress(url,itemsLoaded,itemsTotal) {
       console.log("JSONLoader for "+part.name + " from "+url+" in progress "+itemsLoaded+"/"+itemsTotal);
     }
 
