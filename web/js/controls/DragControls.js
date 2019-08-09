@@ -76,8 +76,7 @@ THREE.DragControls = function ( _objects, _camera, _domElement ) {
 				_selected.position.copy( _intersection.sub( _offset ).applyMatrix4( _inverseMatrix ) );
 
 			}
-
-			scope.dispatchEvent( { type: 'drag', object: _selected } );
+			drag();
 
 			return;
 
@@ -138,11 +137,30 @@ THREE.DragControls = function ( _objects, _camera, _domElement ) {
 
 			_domElement.style.cursor = 'move';
 
-			scope.dispatchEvent( { type: 'dragstart', object: _selected } );
-
+			dragstart();
 		}
+	}
 
+	function dragstart() {
+		scope.dispatchEvent( { type: 'dragstart', object: _selected } );
+		if (typeof markSelected === "function") {
+			markSelected(_selected);
+		}
+	}
 
+	function drag() {
+		scope.dispatchEvent( { type: 'drag', object: _selected } );
+		if (typeof showSelected === "function") {
+			showSelected(_selected);
+		}
+	}
+
+	function dragend() {
+		scope.dispatchEvent( { type: 'dragend', object: _selected } );
+		if (typeof unMarkSelected === "function") {
+			 unMarkSelected(_selected);
+		}
+		_selected = null;
 	}
 
 	function onDocumentMouseCancel( event ) {
@@ -150,11 +168,7 @@ THREE.DragControls = function ( _objects, _camera, _domElement ) {
 		event.preventDefault();
 
 		if ( _selected ) {
-
-			scope.dispatchEvent( { type: 'dragend', object: _selected } );
-
-			_selected = null;
-
+			dragend();
 		}
 
 		_domElement.style.cursor = _hovered ? 'pointer' : 'auto';
@@ -180,8 +194,7 @@ THREE.DragControls = function ( _objects, _camera, _domElement ) {
 				_selected.position.copy( _intersection.sub( _offset ).applyMatrix4( _inverseMatrix ) );
 
 			}
-
-			scope.dispatchEvent( { type: 'drag', object: _selected } );
+			drag();
 
 			return;
 
@@ -217,8 +230,7 @@ THREE.DragControls = function ( _objects, _camera, _domElement ) {
 			}
 
 			_domElement.style.cursor = 'move';
-
-			scope.dispatchEvent( { type: 'dragstart', object: _selected } );
+			dragstart();
 
 		}
 
@@ -230,11 +242,7 @@ THREE.DragControls = function ( _objects, _camera, _domElement ) {
 		event.preventDefault();
 
 		if ( _selected ) {
-
-			scope.dispatchEvent( { type: 'dragend', object: _selected } );
-
-			_selected = null;
-
+			dragend();
 		}
 
 		_domElement.style.cursor = 'auto';
