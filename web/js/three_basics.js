@@ -76,7 +76,9 @@ function createRenderer(width, height) {
   return renderer;
 }
 
-function createControls() {
+// create Trackball controls see e.g.
+// view-source:https://threejs.org/examples/misc_controls_trackball.html
+function createTrackballControls() {
   controls = new THREE.TrackballControls(camera, renderer.domElement);
   controls.rotateSpeed = 1.0;
   controls.zoomSpeed = 1.2;
@@ -86,6 +88,15 @@ function createControls() {
   controls.staticMoving = true;
   controls.dynamicDampingFactor = 0.3;
   return controls;
+}
+
+function createOrbitControls() {
+  controls=new THREE.OrbitControls( camera, renderer.domElement );
+  return controls;
+}
+
+function createControls() {
+  return createOrbitControls();
 }
 
 function addDragControls(objects) {

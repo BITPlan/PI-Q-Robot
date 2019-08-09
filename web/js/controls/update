@@ -1,0 +1,8 @@
+#!/bin/bash
+# WF 2019-08-09
+# update the controls from github
+for control in Drag Trackball Orbit
+do
+  js=${control}Controls.js 
+  curl -s https://raw.githubusercontent.com/mrdoob/three.js/master/examples/js/controls/$js -o $js
+done

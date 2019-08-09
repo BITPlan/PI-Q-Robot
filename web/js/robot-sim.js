@@ -185,8 +185,12 @@ var render = function() {
     camera.zoom = 1 / options.zoom;
   }
   controls.enabled = options.controls;
-  if (controls.enabled)
+  if (controls.enabled) {
     controls.update();
+  } else {
+    camera.lookAt(scene.position);
+    camera.updateProjectionMatrix();
+  }
   if (options.rotate > 0) {
     var timer = Date.now() * 0.00001 * options.rotate;
     r = 150;
@@ -203,9 +207,7 @@ var render = function() {
     options.cameraz = camera.position.z;
     options.zoom = camera.zoom;
   }
-  camera.lookAt(scene.position);
-  //
-  camera.updateProjectionMatrix();
+
   light1.position.set(options.lightx, options.lighty, options.lightz);
   light0.intensity = options.light0i;
   light1.intensity = options.light1i;

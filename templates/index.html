@@ -12,14 +12,7 @@
       <pre>{{ message }}</pre>
     </div>
     <div id='spider' class="h-100 col-md-10">
-      <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/107/three.min.js'></script>
-      <script src='https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.6/dat.gui.min.js'></script>
-      <script src='/js/libs/stats.min.js'></script>
-      <script src='/js/controls/TrackballControls.js'></script>
-      <script src='/js/controls/DragControls.js'></script>
-      <script src='/js/STLLoader.js'></script>
-      <script src='/js/three_basics.js'></script>
-      <script src='/js/robot.js'></script>
+      {% include 'js.html' %}
       <script>
         // configure robot-simulation
         var renderId='spider';
