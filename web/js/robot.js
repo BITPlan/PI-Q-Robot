@@ -1,6 +1,10 @@
 // a part has a name and an stl url and position and rotation vector coordinates
 class ChildPart {
-  constructor(name, stl, x, y, z, rx, ry, rz) {
+
+  // construct me with the given name from the given stl url
+  // with the given position x,y,z and
+  // rotation rx,ry,rz
+  constructor(name, stl, x, y, z, rx, ry, rz,debug=false) {
     this.name = name;
     this.stl = stl;
     this.x = x;
@@ -9,6 +13,8 @@ class ChildPart {
     this.rx = rx;
     this.ry = ry;
     this.rz = rz;
+    this.debug = debug;
+    this.partCount=1;
     // create attributes to be used later
     this.joint = null;
     this.robot = null;
@@ -18,6 +24,26 @@ class ChildPart {
     this.showProgress = false;
   }
 
+  calcSize() {
+    var bbox = new THREE.Box3().setFromObject(this.mesh);
+    this.bbox = bbox;
+    this.size = new THREE.Vector3(
+      bbox.max.x - bbox.min.x,
+      bbox.max.y - bbox.min.y,
+      bbox.max.z - bbox.max.z
+    );
+    if (this.debug)
+      console.log(
+        "bounding box for " +
+          this.name +
+          "=" +
+          JSON.stringify(bbox.min) +
+          JSON.stringify(bbox.max)
+      );
+  }
+
+  // set the positions with the given scene name and
+  // position x,y,z
   setPositions(scene, name, x, y, z) {
     var mesh = scene.getObjectByName(name);
     if (mesh) {
@@ -119,6 +145,11 @@ class ChildPart {
     // call a function with parameters to avoid javascripts this.<field> mess
     this.addSTL(scene, loader, this.name, this.stl, this.x, this.y, this.z, this.rx, this.ry, this.rz, this.setPositions);
   }
+
+  // called when all parts have been loaded
+  fullyLoaded() {
+    this.calcSize();
+  }
 }
 
 // a part that can have subparts
@@ -142,6 +173,7 @@ class Part extends ChildPart {
       for (var partsIndex in partJsonObj.parts) {
         var subPartJsonObj = partJsonObj.parts[partsIndex];
         var subPart = Part.fromJsonObj(subPartJsonObj);
+        this.partCount+=subPart.partCount;
         subPart.parent = part.name;
         part.parts.push(subPart);
       }
@@ -180,29 +212,41 @@ class Part extends ChildPart {
 // a robot consists of a name and a list of parts
 class Robot {
   // construct me with the given name, url to my source (copyright) and array of parts
-  constructor(name, url, parts) {
+  constructor(name, url, parts,debug=false) {
     this.name = name;
     this.url = url;
     this.parts = parts;
     // set to true to debug
-    this.debug = false;
+    this.debug = debug;
     // fields to be used later
     this.whenIntegrated = null;
     this.partsIntegrated = 0;
     this.rotateCounter = 0;
+    this.partCount=0;
     // make sure my parts know me
     for (var partIndex in parts) {
-      parts[partIndex].robot = this;
+      var part=parts[partIndex];
+      this.partCount+=part.partCount+1;
+      part.robot = this;
+    }
+  }
+
+  debug(pDebug=true) {
+    this.debug=pDebug;
+    for (var partIndex in parts) {
+      parts[partIndex].debug = pDebug;
     }
   }
 
   // construct a Robot from the given JSON Object
-  static fromJsonObj(robotObj) {
+  static fromJsonObj(robotObj,debug=false) {
     // first create the array of parts
     var parts = [];
     for (var partIndex in robotObj.parts) {
       var partJsonObj = robotObj.parts[partIndex];
-      parts.push(Part.fromJsonObj(partJsonObj));
+      var part=Part.fromJsonObj(partJsonObj);
+      part.debug=debug;
+      parts.push(part);
     }
     // now call the constructor (which will add back pointers to the robot for each part)
     var robot = new Robot(robotObj.name, robotObj.url, parts);
@@ -232,10 +276,19 @@ class Robot {
   // finalize the loading of the given part - will call whenIntegrated when all parts have been integrated
   integratePart(part) {
     this.partsIntegrated++;
-    if (this.partsIntegrated == this.parts.length) {
+    if (this.partsIntegrated == this.partCount) {
       console.log("all " + this.partsIntegrated + " parts of " + this.name + " integrated")
-      if (this.whenIntegrated)
-        this.whenIntegrated();
+      this.fullyLoaded();
+    }
+  }
+
+  fullyLoaded() {
+    for (var partIndex in this.parts) {
+      this.parts[partIndex].fullyLoaded();
+    }
+    // call the whenIntegrated callback
+    if (this.whenIntegrated) {
+      this.whenIntegrated();
     }
   }
 
@@ -264,9 +317,11 @@ class Robot {
           // be careful when uncommenting this for debugging - this is triggered on every render request
           // at the fps your computer is capable of
           this.rotateCounter++;
+          /*
           if (this.debug)
             if (this.rotateCounter % 50 == 0)
               logSelected("preRotate", mesh);
+          */
           if (options.byAxis) {
             if (options.rotateX)
               mesh.setRotationFromAxisAngle(xAxis, deg2rad(angle));
@@ -282,9 +337,11 @@ class Robot {
             if (options.rotateZ)
               mesh.rotation.z = deg2rad(angle);
           }
+          /*
           if (this.debug)
             if (this.rotateCounter % 50 == 0)
               logSelected("postRotate", mesh);
+          */
         }
       }
     }

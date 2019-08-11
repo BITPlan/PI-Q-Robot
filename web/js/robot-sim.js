@@ -153,7 +153,8 @@ if (typeof robotUrl === "undefined") {
     .then(res => res.json())
     .then((robotObj) => {
       console.log('Checkout this JSON! ', robotObj);
-      robot = Robot.fromJsonObj(robotObj);
+      var debug=true;
+      robot = Robot.fromJsonObj(robotObj,debug);
       robot.loadParts(scene,function whenIntegrated() {
         robot.addGUI(gui,options);
       });
