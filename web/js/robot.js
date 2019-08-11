@@ -4,7 +4,7 @@ class ChildPart {
   // construct me with the given name from the given stl url
   // with the given position x,y,z and
   // rotation rx,ry,rz
-  constructor(name, stl, x, y, z, rx, ry, rz,debug=false) {
+  constructor(name, stl, x, y, z, rx, ry, rz, debug = false) {
     this.name = name;
     this.stl = stl;
     this.x = x;
@@ -14,7 +14,7 @@ class ChildPart {
     this.ry = ry;
     this.rz = rz;
     this.debug = debug;
-    this.partCount=1;
+    this.partCount = 1;
     // create attributes to be used later
     this.joint = null;
     this.robot = null;
@@ -36,26 +36,21 @@ class ChildPart {
     if (this.debug)
       console.log(
         "bounding box for " +
-          this.name +
-          "=" +
-          JSON.stringify(bbox.min) +
-          JSON.stringify(bbox.max)
+        this.name +
+        "=" +
+        JSON.stringify(bbox.min) +
+        JSON.stringify(bbox.max)
       );
   }
 
   // set the positions with the given scene name and
   // position x,y,z
-  static setPositions(meshFactory,part) {
-    //var mesh = meshFactory.scene.getObjectByName(part.name);
-    //if (mesh) {
-      part.mesh.position.set(part.x, part.y, part.z)
-      // make clickable and potentially draggable
-      objects.push(part.mesh);
-      // callback for part
-      //var part = mesh.userData['part'];
-      // integrate the part into the hierachy
-      part.integrate(meshFactory);
-    //}
+  static setPositions(meshFactory, part) {
+    part.mesh.position.set(part.x, part.y, part.z)
+    // make clickable and potentially draggable
+    objects.push(part.mesh);
+    // integrate the part into the hierachy
+    part.integrate(meshFactory);
   }
 
   // abstract hierarchy integration for ChildPart
@@ -75,11 +70,12 @@ class ChildPart {
   /**
    * add an STL file from the given url and set it's name to be able to retrieve it later
    */
-  addSTL(meshFactory,whenDone) {
-    var part=this;
+  addSTL(meshFactory, whenDone) {
+    var part = this;
     if (part.stl) {
       loader.load(part.stl, onLoad, onProgress, onError);
     } else {
+      // this mesh is also potentially a pivot point to rotate around
       var mesh = new THREE.Group();
       var msg = "creating parent with no STL"
       onCreate(mesh, msg);
@@ -89,7 +85,7 @@ class ChildPart {
     function onError(e) {
       console.log("JSONLoader for " + part.name + "(" + part.stl + ") failed! because of error " + e);
       if (typeof e.target !== "undefined") {
-        console.log("\tstatus:" + e.target.status + ", text:'" + e.target.statusText+"'");
+        console.log("\tstatus:" + e.target.status + ", text:'" + e.target.statusText + "'");
       }
       // flag the error for the part
       part.error = e;
@@ -108,7 +104,7 @@ class ChildPart {
     }
 
     function onLoad(geometry) {
-      var material=meshFactory.material;
+      var material = meshFactory.material.clone();
       var mesh = new THREE.Mesh(geometry, material);
       mesh.up.set(0, 1, 0);
       // mesh.position.set(x, y, z);
@@ -131,11 +127,12 @@ class ChildPart {
       meshFactory.scene.add(mesh);
       if (whenDone) {
         console.log(part.name + ": " + msg + " finished")
-        whenDone(meshFactory,part)
+        whenDone(meshFactory, part)
       }
     };
   }
 
+  //  adjust me relative to the given (pivot) mesh
   adjustRelative(toMesh) {
     //logSelected("adjusting toMesh",toMesh);
     //logSelected("beforeAdjust",this.mesh);
@@ -144,13 +141,33 @@ class ChildPart {
     //logSelected("afterAdjust",this.mesh);
   }
 
+  // add my bounding box wire to the given mesh
+  addBoundingBoxWire(toMesh) {
+    var boxwire = new THREE.BoxHelper(this.mesh, 0xff8000);
+    this.boxwire;
+    boxwire.update();
+    toMesh.add(boxwire);
+  }
+
+  // add an AxesHelper with my size to the given mesh
+  addAxesHelper(toMesh) {
+    var axis = new THREE.AxesHelper(this.size.length());
+    toMesh.add(axis);
+  }
+
+  // add may bounding box wire and AxesHelper to the given mesh
+  addBoxWireAndAxesHelper(toMesh) {
+    this.addBoundingBoxWire(toMesh);
+    this.addAxesHelper(toMesh);
+  }
+
   // load me using the given meshFactory
   load(meshFactory) {
     this.addSTL(meshFactory, ChildPart.setPositions);
   }
 
   // called when all parts have been loaded
-  fullyLoaded() {
+  fullyLoaded(meshFactory) {
     this.calcSize();
   }
 }
@@ -176,7 +193,7 @@ class Part extends ChildPart {
       for (var partsIndex in partJsonObj.parts) {
         var subPartJsonObj = partJsonObj.parts[partsIndex];
         var subPart = Part.fromJsonObj(subPartJsonObj);
-        this.partCount+=subPart.partCount;
+        this.partCount += subPart.partCount;
         subPart.parent = part.name;
         part.parts.push(subPart);
       }
@@ -210,75 +227,100 @@ class Part extends ChildPart {
     }
   }
 
-  setDebug(pDebug=true) {
-    this.debug=pDebug;
+  createPivotJoint(meshFactory,r,h) {
+    // cylinder
+    var pivot = meshFactory.createCylinder(
+      r,
+      h,
+      true
+    );
+    // sphere
+    // pivot=this.meshFactory.createSphere(pivotr,true);
+    pivot.rotation.x = THREE.Math.degToRad(this.rx);
+    pivot.rotation.y = THREE.Math.degToRad(this.ry);    
+    pivot.rotation.z = THREE.Math.degToRad(this.rz);
+    pivot.material.color.set("red");
+    return pivot;
+  }
+
+  setDebug(pDebug = true) {
+    this.debug = pDebug;
     for (var partIndex in this.parts) {
       this.parts[partIndex].setDebug(pDebug);
     }
   }
 
   // called when all parts have been loaded
-  fullyLoaded() {
+  fullyLoaded(meshFactory) {
+    super.fullyLoaded(meshFactory);
     for (var partsIndex in this.parts) {
       var part = this.parts[partsIndex];
       part.fullyLoaded();
+      if (this.debug) {
+        if (this.joint !== null) {
+          var pivotJoint=this.createPivotJoint(meshFactory,4,this.size.x);
+          this.mesh.add(pivotJoint);
+          // show axes and bounding box wire frame for debugging
+          console.log("adding Boxwire for "+part.name+" to "+this.name)
+          part.addBoxWireAndAxesHelper(this.mesh);
+        }
+      }
     }
-    super.fullyLoaded();
   }
 }
 
 // a robot consists of a name and a list of parts
 class Robot {
   // construct me with the given name, url to my source (copyright) and array of parts
-  constructor(meshFactory,name, url, parts,debug=false) {
-    this.meshFactory=meshFactory;
+  constructor(meshFactory, name, url, parts, debug = false) {
+    this.meshFactory = meshFactory;
     this.name = name;
     this.url = url;
     this.parts = parts;
     // set to true to debug
     this.debug = debug;
     // fields to be used later
-    this.meshFactory=null;
+    this.meshFactory = null;
     this.whenIntegrated = null;
     this.partsIntegrated = 0;
     this.rotateCounter = 0;
-    this.partCount=0;
+    this.partCount = 0;
     // make sure my parts know me
     for (var partIndex in parts) {
-      var part=parts[partIndex];
-      this.partCount+=part.partCount+1;
+      var part = parts[partIndex];
+      this.partCount += part.partCount + 1;
       part.robot = this;
     }
   }
 
-  setDebug(pDebug=true) {
-    this.debug=pDebug;
+  setDebug(pDebug = true) {
+    this.debug = pDebug;
     for (var partIndex in this.parts) {
       this.parts[partIndex].setDebug(pDebug);
     }
   }
 
   // construct a Robot from the given JSON Object
-  static fromJsonObj(meshFactory,robotObj,debug=false) {
+  static fromJsonObj(meshFactory, robotObj, debug = false) {
     // first create the array of parts
     var parts = [];
     for (var partIndex in robotObj.parts) {
       var partJsonObj = robotObj.parts[partIndex];
-      var part=Part.fromJsonObj(partJsonObj);
-      part.debug=debug;
+      var part = Part.fromJsonObj(partJsonObj);
+      part.debug = debug;
       parts.push(part);
     }
     // now call the constructor (which will add back pointers to the robot for each part)
-    var robot = new Robot(meshFactory,robotObj.name, robotObj.url, parts);
+    var robot = new Robot(meshFactory, robotObj.name, robotObj.url, parts);
     return robot;
   }
 
   // construct a Robot from the given json String
-  static fromJson(meshFactory,robotJson) {
+  static fromJson(meshFactory, robotJson) {
     // parse the JSON string
     var robotObj = JSON.parse(robotJson);
     // construct Robot from the Json Object
-    return fromJsonobj(meshFactory,robotObj);
+    return fromJsonobj(meshFactory, robotObj);
   }
 
   // load all my parts with the given scene and call the given whenIntegrated callback when done
@@ -303,7 +345,7 @@ class Robot {
 
   fullyLoaded() {
     for (var partIndex in this.parts) {
-      this.parts[partIndex].fullyLoaded();
+      this.parts[partIndex].fullyLoaded(meshFactory);
     }
     // call the whenIntegrated callback
     if (this.whenIntegrated) {
