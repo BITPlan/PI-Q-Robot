@@ -1,3 +1,50 @@
+// Factory for Meshes with common properties e.g. same material / segments
+class MeshFactory {
+  // create me with the given scene, loader, default material and default segments
+  constructor(scene,loader,material, segments) {
+    this.scene=scene;
+    this.loader=loader;
+    this.material = material;
+    this.segments = segments;
+  }
+
+  // creates a cylinder with given radius and height
+  createCylinder(radius, height, cloneMaterial = false) {
+    var cylinderGeometry = new THREE.CylinderGeometry(
+      radius,
+      radius,
+      height,
+      this.segments,
+      this.segments
+    );
+    return this.createMesh(cylinderGeometry, cloneMaterial);
+  }
+
+  // creates a sphere with given radius and height
+  createSphere(radius, cloneMaterial = false) {
+    var sphereGeometry = new THREE.SphereGeometry(
+      radius,
+      this.segments,
+      this.segments
+    );
+    return this.createMesh(sphereGeometry, cloneMaterial);
+  }
+
+  // creates a mesh with the given geometry, optionally cloning Material
+  createMesh(geometry, cloneMaterial = false) {
+    var mesh = new THREE.Mesh(geometry, this.getMaterial(cloneMaterial));
+    return mesh;
+  }
+
+  // get the material of this factory - when cloned is true clone a copy of the material
+  // for further modification e.g. changing of color
+  getMaterial(cloned) {
+    var material = this.material;
+    if (cloned) material = material.clone();
+    return material;
+  }
+}
+
 var selected = 0;
 var selectedObject;
 var objects = [];

@@ -45,24 +45,24 @@ class ChildPart {
 
   // set the positions with the given scene name and
   // position x,y,z
-  setPositions(scene, name, x, y, z) {
-    var mesh = scene.getObjectByName(name);
-    if (mesh) {
-      mesh.position.set(x, y, z)
+  static setPositions(meshFactory,part) {
+    //var mesh = meshFactory.scene.getObjectByName(part.name);
+    //if (mesh) {
+      part.mesh.position.set(part.x, part.y, part.z)
       // make clickable and potentially draggable
-      objects.push(mesh);
+      objects.push(part.mesh);
       // callback for part
-      var part = mesh.userData['part'];
+      //var part = mesh.userData['part'];
       // integrate the part into the hierachy
-      part.integrate(scene);
-    }
+      part.integrate(meshFactory);
+    //}
   }
 
   // abstract hierarchy integration for ChildPart
-  integrate(scene) {
+  integrate(meshFactory) {
     // if i am a child part integrate me via my parent part
     if (this.parent) {
-      var parentMesh = scene.getObjectByName(this.parent);
+      var parentMesh = meshFactory.scene.getObjectByName(this.parent);
       var parentPart = parentMesh.userData['part'];
       // tell my parent that i'd like to be integrated
       parentPart.integrateChild(this);
@@ -75,10 +75,10 @@ class ChildPart {
   /**
    * add an STL file from the given url and set it's name to be able to retrieve it later
    */
-  addSTL(scene, loader, name, url, x, y, z, rx, ry, rz, whenDone) {
-    var part = this; // make this available for callbacks
-    if (url) {
-      loader.load(url, onLoad, onProgress, onError);
+  addSTL(meshFactory,whenDone) {
+    var part=this;
+    if (part.stl) {
+      loader.load(part.stl, onLoad, onProgress, onError);
     } else {
       var mesh = new THREE.Group();
       var msg = "creating parent with no STL"
@@ -108,17 +108,12 @@ class ChildPart {
     }
 
     function onLoad(geometry) {
-      // Model:
-      var material = new THREE.MeshPhongMaterial({
-        color: 0xFFFFFF, // light gray
-        specular: 0x111111, // very dark grey
-        shininess: 50
-      });
+      var material=meshFactory.material;
       var mesh = new THREE.Mesh(geometry, material);
       mesh.up.set(0, 1, 0);
       // mesh.position.set(x, y, z);
       geometry.center();
-      onCreate(mesh, "loading from url " + url);
+      onCreate(mesh, "loading from url " + part.stl);
     }
 
     // callback on creation of loaded mesh
@@ -128,32 +123,30 @@ class ChildPart {
       // make the part available in the userdata of the mesh
       mesh.userData['part'] = part;
       // rotate mesh as requested
-      mesh.rotation.set(deg2rad(rx), deg2rad(ry), deg2rad(rz));
+      mesh.rotation.set(deg2rad(part.rx), deg2rad(part.ry), deg2rad(part.rz));
       // mesh.scale.set(0.5, 0.5, 0.5);
       mesh.castShadow = true;
       mesh.receiveShadow = true;
-      mesh.name = name;
-      scene.add(mesh);
+      mesh.name = part.name;
+      meshFactory.scene.add(mesh);
       if (whenDone) {
-        console.log(name + ": " + msg + " finished")
-        whenDone(scene, name, x, y, z)
+        console.log(part.name + ": " + msg + " finished")
+        whenDone(meshFactory,part)
       }
     };
   }
 
-  shiftRelative(toMesh) {
-
-      logSelected("shifting toMesh",toMesh);
-      logSelected("beforeShift",this.mesh);
+  adjustRelative(toMesh) {
+    //logSelected("adjusting toMesh",toMesh);
+    //logSelected("beforeAdjust",this.mesh);
     toMesh.updateMatrixWorld(); // important !
     this.mesh.applyMatrix(new THREE.Matrix4().getInverse(toMesh.matrixWorld));
-      logSelected("afterShift",this.mesh);
+    //logSelected("afterAdjust",this.mesh);
   }
 
-  // load me using the given scene and loader
-  load(scene, loader) {
-    // call a function with parameters to avoid javascripts this.<field> mess
-    this.addSTL(scene, loader, this.name, this.stl, this.x, this.y, this.z, this.rx, this.ry, this.rz, this.setPositions);
+  // load me using the given meshFactory
+  load(meshFactory) {
+    this.addSTL(meshFactory, ChildPart.setPositions);
   }
 
   // called when all parts have been loaded
@@ -198,7 +191,7 @@ class Part extends ChildPart {
     // this.mesh.attach(childPart.mesh);
     this.mesh.add(childPart.mesh);
 
-    childPart.shiftRelative(this.mesh);
+    childPart.adjustRelative(this.mesh);
 
     this.partsIntegrated++;
     if (this.partsIntegrated == this.parts.length) {
@@ -216,18 +209,36 @@ class Part extends ChildPart {
       part.load(scene, loader);
     }
   }
+
+  setDebug(pDebug=true) {
+    this.debug=pDebug;
+    for (var partIndex in this.parts) {
+      this.parts[partIndex].setDebug(pDebug);
+    }
+  }
+
+  // called when all parts have been loaded
+  fullyLoaded() {
+    for (var partsIndex in this.parts) {
+      var part = this.parts[partsIndex];
+      part.fullyLoaded();
+    }
+    super.fullyLoaded();
+  }
 }
 
 // a robot consists of a name and a list of parts
 class Robot {
   // construct me with the given name, url to my source (copyright) and array of parts
-  constructor(name, url, parts,debug=false) {
+  constructor(meshFactory,name, url, parts,debug=false) {
+    this.meshFactory=meshFactory;
     this.name = name;
     this.url = url;
     this.parts = parts;
     // set to true to debug
     this.debug = debug;
     // fields to be used later
+    this.meshFactory=null;
     this.whenIntegrated = null;
     this.partsIntegrated = 0;
     this.rotateCounter = 0;
@@ -240,15 +251,15 @@ class Robot {
     }
   }
 
-  debug(pDebug=true) {
+  setDebug(pDebug=true) {
     this.debug=pDebug;
-    for (var partIndex in parts) {
-      parts[partIndex].debug = pDebug;
+    for (var partIndex in this.parts) {
+      this.parts[partIndex].setDebug(pDebug);
     }
   }
 
   // construct a Robot from the given JSON Object
-  static fromJsonObj(robotObj,debug=false) {
+  static fromJsonObj(meshFactory,robotObj,debug=false) {
     // first create the array of parts
     var parts = [];
     for (var partIndex in robotObj.parts) {
@@ -258,27 +269,26 @@ class Robot {
       parts.push(part);
     }
     // now call the constructor (which will add back pointers to the robot for each part)
-    var robot = new Robot(robotObj.name, robotObj.url, parts);
+    var robot = new Robot(meshFactory,robotObj.name, robotObj.url, parts);
     return robot;
   }
 
   // construct a Robot from the given json String
-  static fromJson(robotJson) {
+  static fromJson(meshFactory,robotJson) {
     // parse the JSON string
     var robotObj = JSON.parse(robotJson);
     // construct Robot from the Json Object
-    return fromJsonobj(robotObj);
+    return fromJsonobj(meshFactory,robotObj);
   }
 
   // load all my parts with the given scene and call the given whenIntegrated callback when done
-  loadParts(scene, whenIntegrated) {
+  loadParts(whenIntegrated) {
     // remember the callback for finalizing the integration - see integratePart
     this.whenIntegrated = whenIntegrated;
-    var loader = new THREE.STLLoader();
     for (var partsIndex in this.parts) {
       var part = this.parts[partsIndex];
       // integratePart will be called when finished
-      part.load(scene, loader);
+      part.load(meshFactory);
     }
   }
 

@@ -132,6 +132,22 @@ camera.position.set(options.camerax, options.cameray, options.cameraz);
 
 addDragControls(objects);
 
+// default material to be used in MeshFactory
+/* var material = new THREE.MeshPhongMaterial({
+  color: 0x0033ff,
+  specular: 0x555555,
+  shininess: 200
+});
+*/
+var material = new THREE.MeshPhongMaterial({
+  color: 0xFFFFFF, // light gray
+  specular: 0x111111, // very dark grey
+  shininess: 50
+});
+
+var loader = new THREE.STLLoader();
+var meshFactory = new MeshFactory(scene,loader,material, 64);
+
 const urlParams = new URLSearchParams(window.location.search);
 urlParams.forEach((value, key) => {
   if (key in options) {
@@ -153,9 +169,9 @@ if (typeof robotUrl === "undefined") {
     .then(res => res.json())
     .then((robotObj) => {
       console.log('Checkout this JSON! ', robotObj);
-      var debug=true;
-      robot = Robot.fromJsonObj(robotObj,debug);
-      robot.loadParts(scene,function whenIntegrated() {
+      robot = Robot.fromJsonObj(meshFactory,robotObj);
+      robot.setDebug(true);
+      robot.loadParts(function whenIntegrated() {
         robot.addGUI(gui,options);
       });
     })
