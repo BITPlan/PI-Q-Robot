@@ -24,6 +24,7 @@ class ChildPart {
     this.showProgress = false;
   }
 
+  // calculate the size of this part by creating a bounding box around it
   calcSize() {
     var bbox = new THREE.Box3().setFromObject(this.mesh);
     this.bbox = bbox;
@@ -140,6 +141,15 @@ class ChildPart {
     };
   }
 
+  shiftRelative(toMesh) {
+
+      logSelected("shifting toMesh",toMesh);
+      logSelected("beforeShift",this.mesh);
+    toMesh.updateMatrixWorld(); // important !
+    this.mesh.applyMatrix(new THREE.Matrix4().getInverse(toMesh.matrixWorld));
+      logSelected("afterShift",this.mesh);
+  }
+
   // load me using the given scene and loader
   load(scene, loader) {
     // call a function with parameters to avoid javascripts this.<field> mess
@@ -188,8 +198,7 @@ class Part extends ChildPart {
     // this.mesh.attach(childPart.mesh);
     this.mesh.add(childPart.mesh);
 
-    this.mesh.updateMatrixWorld(); // important !
-    childPart.mesh.applyMatrix(new THREE.Matrix4().getInverse(this.mesh.matrixWorld))
+    childPart.shiftRelative(this.mesh);
 
     this.partsIntegrated++;
     if (this.partsIntegrated == this.parts.length) {
