@@ -278,9 +278,9 @@
       "x": -80,
       "y": 69,
       "z": -69,
-      "rx": 0,
-      "ry": 0,
-      "rz": 0,
+      "rx": 90,
+      "ry": 180,
+      "rz": 225,
       "parts": [{
         "name": "femurpart0",
         "stl": "/models/stl/femur.stl",
@@ -297,12 +297,11 @@
       "x": 82,
       "y": 69,
       "z": -70,
-      "rx": 0,
-      "ry": 0,
-      "rz": 0,
+      "rx": 90,
+      "ry": 180,
+      "rz": 315,
       "parts": [{
         "name": "femurpart1",
-        "joint": 4,
         "stl": "/models/stl/femur.stl",
         "x": 82,
         "y": 69,
@@ -323,7 +322,6 @@
       "rz": 0,
       "parts": [{
         "name": "femurpart2",
-        "joint": 4,
         "stl": "/models/stl/femur.stl",
         "x": -82,
         "y": 69,
@@ -334,7 +332,6 @@
       }]
     }, {
       "name": "femur3",
-      "joint": 4,
       "x": 82,
       "y": 69,
       "z": 70,
@@ -359,9 +356,9 @@
       "x": -90,
       "y": 68.5,
       "z": -80,
-      "rx": 90,
+      "rx": 0,
       "ry": 90,
-      "rz": 90,
+      "rz": 0,
       "parts": [{
         "name": "tibiapart0",
         "stl": "/models/stl/tibia-b.stl",

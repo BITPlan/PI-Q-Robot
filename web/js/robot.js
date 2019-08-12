@@ -22,6 +22,7 @@ class ChildPart {
     this.mesh = null;
     this.error = null;
     this.showProgress = false;
+    this.allParts= null;
   }
 
   // calculate the size of this part by creating a bounding box around it
@@ -275,19 +276,17 @@ class Part extends ChildPart {
     return pivot;
   }
 
-  // recursively set Debug
-  setDebug(pDebug = true) {
-    this.debug = pDebug;
-    for (var partIndex in this.parts) {
-      this.parts[partIndex].setDebug(pDebug);
-    }
-  }
-
-  // resursively set Robot
-  setRobot(pRobot) {
-    this.robot = pRobot;
-    for (var partIndex in this.parts) {
-      this.parts[partIndex].setRobot(pRobot);
+  // recursively get all parts
+  getAllParts() {
+    this.allParts=this.parts.slice(0); // clone the parts
+    for (var partsIndex in this.parts) {
+      var part = this.parts[partsIndex];
+      if (typeof part.getAllParts !== "undefined") {
+        part.getAllParts();
+        for (var subPartsIndex in part.allParts) {
+          this.allParts.push(part.allParts[subPartsIndex]);
+        }
+      }
     }
   }
 
@@ -340,23 +339,10 @@ class Robot {
       var part = parts[partIndex];
       console.log(part.name + ": " + part.partCount + " parts");
       this.partCount += part.partCount;
-      part.setRobot(this);
     }
-  }
-
-  // recursively set debug flag
-  setDebug(pDebug = true) {
-    this.debug = pDebug;
-    for (var partIndex in this.parts) {
-      this.parts[partIndex].setDebug(pDebug);
-    }
-  }
-
-  // resursively set Robot
-  setRobot(pRobot) {
-    this.robot = pRobot;
-    for (var partIndex in this.parts) {
-      this.parts[partIndex].setRobot(pRobot);
+    this.getAllParts();
+    for (var partIndex in this.allParts) {
+      this.allParts[partIndex].robot=this;
     }
   }
 
@@ -419,11 +405,30 @@ class Robot {
     }
   }
 
+  getAllParts() {
+    this.allParts=this.parts.slice(0); // clone the parts
+    for (var partsIndex in this.parts) {
+      var part = this.parts[partsIndex];
+      part.getAllParts();
+      for (var subPartsIndex in part.allParts) {
+        this.allParts.push(part.allParts[subPartsIndex]);
+      }
+    }
+  }
+
+  // recursively set debug flag
+  setDebug(pDebug = true) {
+    this.debug = pDebug;
+    for (var partIndex in this.allParts) {
+      this.allParts[partIndex].debug=pDebug;
+    }
+  }
+
   // add my options to dat.gui for interative rendering
   addGUI(gui, options) {
     console.log("preparing gui rendering options for " + this.name)
-    for (var partsIndex in this.parts) {
-      var part = this.parts[partsIndex];
+    for (var partsIndex in this.allParts) {
+      var part = this.allParts[partsIndex];
       if (part.joint !== null) {
         options[part.name] = part.joint;
         // TODO make range configurable
@@ -435,8 +440,8 @@ class Robot {
   // rotate the Joints of this robot
   rotateJoints(scene, options) {
     // Rotate joints
-    for (var partsIndex in this.parts) {
-      var part = this.parts[partsIndex];
+    for (var partsIndex in this.allParts) {
+      var part = this.allParts[partsIndex];
       if (part.joint !== null) {
         var mesh = scene.getObjectByName(part.name);
         if (mesh) {
