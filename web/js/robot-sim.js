@@ -1,5 +1,4 @@
-console.log(Singleton.getInstance().field1);
-console.log(Singleton.getInstance().field2);
+
 // create a scene
 near = 1;
 far = 1000;
@@ -131,6 +130,7 @@ renderContainer.appendChild(renderer.domElement);
 
 controls = createControls();
 camera.position.set(options.camerax, options.cameray, options.cameraz);
+console.log(JSON.stringify(camera.position));
 
 addDragControls(objects);
 

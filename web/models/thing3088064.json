@@ -1,6 +1,7 @@
 {
   "name": "Bras robotique pour Hexapode ",
   "url": "https://www.thingiverse.com/thing:3088064",
+  "camera": {"x":-124.6,"y":230,"z":268},
   "parts": [{
       "name": "Piece 1",
       "x": -127,
@@ -25,8 +26,8 @@
     {
       "name": "Piece 2",
       "x": -77,
-      "y": 121,
-      "z": 102,
+      "y": 122,
+      "z": 121.5,
       "rx": 270,
       "ry": 0,
       "rz": 0,

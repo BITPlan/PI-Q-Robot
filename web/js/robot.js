@@ -31,7 +31,7 @@ class ChildPart {
     this.size = new THREE.Vector3(
       bbox.max.x - bbox.min.x,
       bbox.max.y - bbox.min.y,
-      bbox.max.z - bbox.max.z
+      bbox.max.z - bbox.min.z
     );
     if (this.debug)
       console.log(
@@ -120,7 +120,7 @@ class ChildPart {
       mesh.userData['part'] = part;
       // rotate mesh as requested
       mesh.rotation.set(deg2rad(part.rx), deg2rad(part.ry), deg2rad(part.rz));
-    
+
       // mesh.scale.set(0.5, 0.5, 0.5);
       mesh.castShadow = true;
       mesh.receiveShadow = true;
@@ -231,7 +231,12 @@ class Part extends ChildPart {
   // create a visible pivot Joint
   createPivotJoint(meshFactory) {
     var radius=this.joint;
-    var height=this.size.x;
+    // height in normal "up" rotation
+    var height=this.size.y;
+    // are we rotate in x direction (90 or 270 degrees)
+    if (this.rx == 90 || this.rx==270) {
+       height=this.size.z;
+    }
     // cylinder
     var pivot = meshFactory.createCylinder(
       radius,
