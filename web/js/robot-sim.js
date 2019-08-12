@@ -1,3 +1,5 @@
+console.log(Singleton.getInstance().field1);
+console.log(Singleton.getInstance().field2);
 // create a scene
 near = 1;
 far = 1000;
@@ -170,7 +172,7 @@ if (typeof robotUrl === "undefined") {
     .then((robotObj) => {
       console.log('Checkout this JSON! ', robotObj);
       robot = Robot.fromJsonObj(meshFactory,robotObj);
-      // robot.setDebug(true);
+      robot.setDebug(true);
       robot.loadParts(function whenIntegrated() {
         robot.addGUI(gui,options);
       });

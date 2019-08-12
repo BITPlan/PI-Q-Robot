@@ -120,6 +120,7 @@ class ChildPart {
       mesh.userData['part'] = part;
       // rotate mesh as requested
       mesh.rotation.set(deg2rad(part.rx), deg2rad(part.ry), deg2rad(part.rz));
+    
       // mesh.scale.set(0.5, 0.5, 0.5);
       mesh.castShadow = true;
       mesh.receiveShadow = true;
@@ -227,18 +228,19 @@ class Part extends ChildPart {
     }
   }
 
-  createPivotJoint(meshFactory,r,h) {
+  // create a visible pivot Joint
+  createPivotJoint(meshFactory) {
+    var radius=this.joint;
+    var height=this.size.x;
     // cylinder
     var pivot = meshFactory.createCylinder(
-      r,
-      h,
+      radius,
+      height,
       true
     );
     // sphere
     // pivot=this.meshFactory.createSphere(pivotr,true);
-    pivot.rotation.x = THREE.Math.degToRad(this.rx);
-    pivot.rotation.y = THREE.Math.degToRad(this.ry);    
-    pivot.rotation.z = THREE.Math.degToRad(this.rz);
+    // @TODO  make configurable e.g. via MeshFactory
     pivot.material.color.set("red");
     return pivot;
   }
@@ -258,7 +260,10 @@ class Part extends ChildPart {
       part.fullyLoaded();
       if (this.debug) {
         if (this.joint !== null) {
-          var pivotJoint=this.createPivotJoint(meshFactory,4,this.size.x);
+          var pivotJoint=this.createPivotJoint(meshFactory);
+          pivotJoint.name=this.name+"pivotJoint";
+          // for debugging
+          objects.push(pivotJoint);
           this.mesh.add(pivotJoint);
           // show axes and bounding box wire frame for debugging
           console.log("adding Boxwire for "+part.name+" to "+this.name)

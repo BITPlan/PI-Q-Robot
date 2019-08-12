@@ -113,7 +113,7 @@
     },
     {
       "name": "coxa0",
-      "joint": 0,
+      "joint": 4,
       "x": -50,
       "y": 77,
       "z": -41,
@@ -151,7 +151,7 @@
     },
     {
       "name": "coxa1",
-      "joint": 0,
+      "joint": 4,
       "x": 50,
       "y": 77,
       "z": -41,
@@ -192,7 +192,7 @@
     },
     {
       "name": "coxa2",
-      "joint": 0,
+      "joint": 4,
       "x": -50,
       "y": 77,
       "z": 41,
@@ -232,7 +232,7 @@
     },
     {
       "name": "coxa3",
-      "joint": 0,
+      "joint": 4,
       "x": 50,
       "y": 77,
       "z": 41,
@@ -274,9 +274,9 @@
     },
     {
       "name": "femur0",
-      "joint": 0,
+      "joint": 4,
       "x": -80,
-      "y": 0,
+      "y": 69,
       "z": -69,
       "rx": 0,
       "ry": 0,
@@ -293,16 +293,16 @@
       }]
     }, {
       "name": "femur1",
-      "joint": 0,
+      "joint": 4,
       "x": 82,
-      "y": 0,
+      "y": 69,
       "z": -70,
       "rx": 0,
       "ry": 0,
       "rz": 0,
       "parts": [{
         "name": "femurpart1",
-        "joint": 0,
+        "joint": 4,
         "stl": "/models/stl/femur.stl",
         "x": 82,
         "y": 69,
@@ -314,16 +314,16 @@
     },
     {
       "name": "femur2",
-      "joint": 0,
+      "joint": 4,
       "x": -82,
-      "y": 0,
-      "z": -70,
+      "y": 69,
+      "z": 70,
       "rx": 0,
       "ry": 0,
       "rz": 0,
       "parts": [{
         "name": "femurpart2",
-        "joint": 0,
+        "joint": 4,
         "stl": "/models/stl/femur.stl",
         "x": -82,
         "y": 69,
@@ -334,16 +334,16 @@
       }]
     }, {
       "name": "femur3",
-      "joint": 0,
+      "joint": 4,
       "x": 82,
-      "y": 0,
+      "y": 69,
       "z": 70,
       "rx": 0,
       "ry": 0,
       "rz": 0,
       "parts": [{
         "name": "femurpart3",
-        "joint": 0,
+        "joint": 4,
         "stl": "/models/stl/femur.stl",
         "x": 82,
         "y": 69,
@@ -355,13 +355,13 @@
     },
     {
       "name": "tibia0",
-      "joint": 0,
-      "x": -117,
+      "joint": 10,
+      "x": -90,
       "y": 68.5,
-      "z": -100,
-      "rx": 0,
-      "ry": 0,
-      "rz": 0,
+      "z": -80,
+      "rx": 90,
+      "ry": 90,
+      "rz": 90,
       "parts": [{
         "name": "tibiapart0",
         "stl": "/models/stl/tibia-b.stl",
@@ -393,12 +393,12 @@
     },
     {
       "name": "tibia1",
-      "joint": 0,
+      "joint": 4,
       "x": 110,
       "y": 68.5,
       "z": -106,
       "rx": 0,
-      "ry": 0,
+      "ry": 90,
       "rz": 0,
       "parts": [{
         "name": "tibiapart1",
@@ -430,7 +430,7 @@
       }]
     }, {
       "name": "tibia2",
-      "joint": 0,
+      "joint": 4,
       "x": -122,
       "y": 68.5,
       "z": 100,
@@ -469,7 +469,7 @@
       ]
     }, {
       "name": "tibia3",
-      "joint": 0,
+      "joint": 4,
       "x": 122,
       "y": 68.5,
       "z": 100,

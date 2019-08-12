@@ -1,11 +1,33 @@
+class Singleton {
+
+      constructor(field1,field2) {
+        this.field1=field1;
+        this.field2=field2;
+        Singleton.instance=this;
+      }
+
+      static getInstance() {
+        if (!Singleton.instance) {
+          Singleton.instance=new Singleton('DefaultField1','DefaultField2');
+        }
+        return Singleton.instance;
+      }
+    }
+    
 // Factory for Meshes with common properties e.g. same material / segments
 class MeshFactory {
+  static getInstance() {
+    return MeshFactory.instance;
+  }
+
   // create me with the given scene, loader, default material and default segments
   constructor(scene,loader,material, segments) {
     this.scene=scene;
     this.loader=loader;
     this.material = material;
     this.segments = segments;
+    this.selectionColor='blue';
+    MeshFactory.instance=this;
   }
 
   // creates a cylinder with given radius and height
@@ -227,7 +249,7 @@ function markSelected(selectedObject) {
   showSelected(selectedObject);
   oldColor = selectedObject.material.color.clone();
   oldSelected = selectedObject;
-  selectedObject.material.color.set('blue');
+  selectedObject.material.color.set(MeshFactory.getInstance().selectionColor);
 }
 
 // make name, position and rotation available
