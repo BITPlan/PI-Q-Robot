@@ -148,6 +148,7 @@ var material = new THREE.MeshPhongMaterial({
 });
 
 var loader = new THREE.STLLoader();
+// create MeshFactory - available via MeshFactory.getInstance()
 var meshFactory = new MeshFactory(scene,loader,material, 64);
 
 const urlParams = new URLSearchParams(window.location.search);
@@ -171,7 +172,7 @@ if (typeof robotUrl === "undefined") {
     .then(res => res.json())
     .then((robotObj) => {
       console.log('Checkout this JSON! ', robotObj);
-      robot = Robot.fromJsonObj(meshFactory,robotObj);
+      robot = Robot.fromJsonObj(robotObj);
       robot.setDebug(true);
       robot.loadParts(function whenIntegrated() {
         robot.addGUI(gui,options);

@@ -1,7 +1,11 @@
 {
   "name": "Bras robotique pour Hexapode ",
   "url": "https://www.thingiverse.com/thing:3088064",
-  "camera": {"x":-124.6,"y":230,"z":268},
+  "camera": {
+    "x": -124.6,
+    "y": 230,
+    "z": 268
+  },
   "parts": [{
       "name": "Piece 1",
       "x": -127,
@@ -20,41 +24,42 @@
         "rx": 0,
         "ry": 90,
         "rz": 0,
-        "stl": "https://cdn.thingiverse.com/assets/be/97/2c/15/10/Pi%C3%A8ce1.STL"
-      }]
-    },
-    {
-      "name": "Piece 2",
-      "x": -77,
-      "y": 122,
-      "z": 121.5,
-      "rx": 270,
-      "ry": 0,
-      "rz": 0,
-      "joint": 4,
-
-      "parts": [{
-          "name": "Piece 2 top",
-          "x": -34,
-          "y": 148,
-          "z": 127,
+        "stl": "https://cdn.thingiverse.com/assets/be/97/2c/15/10/Pi%C3%A8ce1.STL",
+        "parts": [{
+          "name": "Piece 2",
+          "x": -77,
+          "y": 122,
+          "z": 121.5,
           "rx": 270,
           "ry": 0,
           "rz": 0,
-          "stl": "https://cdn.thingiverse.com/assets/15/4b/e0/8a/f5/Pi%C3%A8ce2.STL"
-        },
-        {
-          "name": "Piece 2 bottom",
-          "x": -39,
-          "y": 101,
-          "z": 118,
-          "rx": 90,
-          "ry": 0,
-          "rz": 0,
-          "stl": "https://cdn.thingiverse.com/assets/15/4b/e0/8a/f5/Pi%C3%A8ce2.STL"
-        }
-      ]
-    }, {
+          "joint": 4,
+
+          "parts": [{
+              "name": "Piece 2 top",
+              "x": -34,
+              "y": 148,
+              "z": 127,
+              "rx": 270,
+              "ry": 0,
+              "rz": 0,
+              "stl": "https://cdn.thingiverse.com/assets/15/4b/e0/8a/f5/Pi%C3%A8ce2.STL"
+            },
+            {
+              "name": "Piece 2 bottom",
+              "x": -39,
+              "y": 101,
+              "z": 118,
+              "rx": 90,
+              "ry": 0,
+              "rz": 0,
+              "stl": "https://cdn.thingiverse.com/assets/15/4b/e0/8a/f5/Pi%C3%A8ce2.STL"
+            }
+          ]
+        }]
+      }]
+    },
+    {
       "name": "Piece 3",
       "x": 0,
       "y": 125,

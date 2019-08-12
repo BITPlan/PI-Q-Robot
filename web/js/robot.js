@@ -43,21 +43,39 @@ class ChildPart {
       );
   }
 
-  // set the positions with the given scene name and
-  // position x,y,z
-  static setPositions(meshFactory, part) {
-    part.mesh.position.set(part.x, part.y, part.z)
+  // call pack when loading is finished for a given part
+  static onLoaded(part) {
+    part.loaded()
+  }
+
+  loaded() {
+    if (!this.mesh) {
+      console.log("error: loaded called but mesh not set for " + this.name)
+      return;
+    }
+    this.mesh.position.set(this.x, this.y, this.z)
     // make clickable and potentially draggable
-    objects.push(part.mesh);
-    // integrate the part into the hierachy
-    part.integrate(meshFactory);
+    objects.push(this.mesh);
+    this.robot.partLoaded(this);
+  }
+
+  // called when all parts have been loaded
+  fullyLoaded() {
+    // integrate this part into the hierachy
+    this.integrate();
+    // then calculate my size
+    this.calcSize();
   }
 
   // abstract hierarchy integration for ChildPart
-  integrate(meshFactory) {
+  integrate() {
     // if i am a child part integrate me via my parent part
     if (this.parent) {
-      var parentMesh = meshFactory.scene.getObjectByName(this.parent);
+      var parentMesh = MeshFactory.getInstance().scene.getObjectByName(this.parent);
+      if (!parentMesh) {
+        console.log('error: parentMesh ' + this.parent + ' not available yet for ' + this.name);
+        return;
+      }
       var parentPart = parentMesh.userData['part'];
       // tell my parent that i'd like to be integrated
       parentPart.integrateChild(this);
@@ -70,7 +88,7 @@ class ChildPart {
   /**
    * add an STL file from the given url and set it's name to be able to retrieve it later
    */
-  addSTL(meshFactory, whenDone) {
+  addSTL(whenDone) {
     var part = this;
     if (part.stl) {
       loader.load(part.stl, onLoad, onProgress, onError);
@@ -86,6 +104,15 @@ class ChildPart {
       console.log("JSONLoader for " + part.name + "(" + part.stl + ") failed! because of error " + e);
       if (typeof e.target !== "undefined") {
         console.log("\tstatus:" + e.target.status + ", text:'" + e.target.statusText + "'");
+      }
+      if (typeof e.fileName !== "undefined") {
+        console.log("\tfileName:" + e.fileName);
+      }
+      if (typeof e.lineNumber !== "undefined") {
+        console.log("\tline:" + e.lineNumber);
+      }
+      if (typeof e.columnNumber !== "undefined") {
+        console.log("\tcol:" + e.columnNumber);
       }
       // flag the error for the part
       part.error = e;
@@ -104,7 +131,7 @@ class ChildPart {
     }
 
     function onLoad(geometry) {
-      var material = meshFactory.material.clone();
+      var material = MeshFactory.getInstance().material.clone();
       var mesh = new THREE.Mesh(geometry, material);
       mesh.up.set(0, 1, 0);
       // mesh.position.set(x, y, z);
@@ -125,10 +152,10 @@ class ChildPart {
       mesh.castShadow = true;
       mesh.receiveShadow = true;
       mesh.name = part.name;
-      meshFactory.scene.add(mesh);
+      MeshFactory.getInstance().scene.add(mesh);
       if (whenDone) {
         console.log(part.name + ": " + msg + " finished")
-        whenDone(meshFactory, part)
+        whenDone(part)
       }
     };
   }
@@ -162,15 +189,12 @@ class ChildPart {
     this.addAxesHelper(toMesh);
   }
 
-  // load me using the given meshFactory
-  load(meshFactory) {
-    this.addSTL(meshFactory, ChildPart.setPositions);
+  // load me
+  load() {
+    // use the STL loader and the onLoaded callback
+    this.addSTL(ChildPart.onLoaded);
   }
 
-  // called when all parts have been loaded
-  fullyLoaded(meshFactory) {
-    this.calcSize();
-  }
 }
 
 // a part that can have subparts
@@ -194,7 +218,7 @@ class Part extends ChildPart {
       for (var partsIndex in partJsonObj.parts) {
         var subPartJsonObj = partJsonObj.parts[partsIndex];
         var subPart = Part.fromJsonObj(subPartJsonObj);
-        this.partCount += subPart.partCount;
+        part.partCount += subPart.partCount;
         subPart.parent = part.name;
         part.parts.push(subPart);
       }
@@ -212,31 +236,32 @@ class Part extends ChildPart {
     childPart.adjustRelative(this.mesh);
 
     this.partsIntegrated++;
-    if (this.partsIntegrated == this.parts.length) {
+    if (this.partsIntegrated == this.partCount) {
       console.log("all " + this.partsIntegrated + " child parts of " + this.name + " integrated")
       this.robot.integratePart(this);
     }
   }
 
-  load(scene, loader) {
+  load() {
     // load the direct stl
-    super.load(scene, loader);
+    super.load();
     // recursively load other parts
     for (var partsIndex in this.parts) {
       var part = this.parts[partsIndex];
-      part.load(scene, loader);
+      part.load();
     }
   }
 
   // create a visible pivot Joint
-  createPivotJoint(meshFactory) {
-    var radius=this.joint;
+  createPivotJoint() {
+    var radius = this.joint;
     // height in normal "up" rotation
-    var height=this.size.y;
+    var height = this.size.y;
     // are we rotate in x direction (90 or 270 degrees)
-    if (this.rx == 90 || this.rx==270) {
-       height=this.size.z;
+    if (this.rx == 90 || this.rx == 270) {
+      height = this.size.z;
     }
+    var meshFactory = MeshFactory.getInstance();
     // cylinder
     var pivot = meshFactory.createCylinder(
       radius,
@@ -244,12 +269,13 @@ class Part extends ChildPart {
       true
     );
     // sphere
-    // pivot=this.meshFactory.createSphere(pivotr,true);
+    // pivot=MeshFactory.getInstance().createSphere(pivotr,true);
     // @TODO  make configurable e.g. via MeshFactory
-    pivot.material.color.set("red");
+    pivot.material.color.set(meshFactory.jointColor);
     return pivot;
   }
 
+  // recursively set Debug
   setDebug(pDebug = true) {
     this.debug = pDebug;
     for (var partIndex in this.parts) {
@@ -257,23 +283,38 @@ class Part extends ChildPart {
     }
   }
 
-  // called when all parts have been loaded
-  fullyLoaded(meshFactory) {
-    super.fullyLoaded(meshFactory);
+  // resursively set Robot
+  setRobot(pRobot) {
+    this.robot = pRobot;
+    for (var partIndex in this.parts) {
+      this.parts[partIndex].setRobot(pRobot);
+    }
+  }
+
+  // called when me and all my subparts have been loaded
+  fullyLoaded() {
+    // bottom up -first the parts
     for (var partsIndex in this.parts) {
       var part = this.parts[partsIndex];
       part.fullyLoaded();
       if (this.debug) {
-        if (this.joint !== null) {
-          var pivotJoint=this.createPivotJoint(meshFactory);
-          pivotJoint.name=this.name+"pivotJoint";
-          // for debugging
-          objects.push(pivotJoint);
-          this.mesh.add(pivotJoint);
-          // show axes and bounding box wire frame for debugging
-          console.log("adding Boxwire for "+part.name+" to "+this.name)
-          part.addBoxWireAndAxesHelper(this.mesh);
-        }
+        // show bounding box wire frame for debugging
+        console.log("adding Boxwire for " + part.name + " to " + this.name)
+        part.addBoundingBoxWire(this.mesh);
+      }
+    }
+    // then myself
+    super.fullyLoaded();
+    if (this.debug) {
+      if (this.joint !== null) {
+        var pivotJoint = this.createPivotJoint();
+        pivotJoint.name = this.name + "pivotJoint";
+        // for debugging
+        objects.push(pivotJoint);
+        this.mesh.add(pivotJoint);
+        // show axes and bounding box wire frame for debugging
+        console.log("adding axes helper to joint/pivot " + this.name)
+        this.addAxesHelper(this.mesh);
       }
     }
   }
@@ -282,27 +323,28 @@ class Part extends ChildPart {
 // a robot consists of a name and a list of parts
 class Robot {
   // construct me with the given name, url to my source (copyright) and array of parts
-  constructor(meshFactory, name, url, parts, debug = false) {
-    this.meshFactory = meshFactory;
+  constructor(name, url, parts, debug = false) {
     this.name = name;
     this.url = url;
     this.parts = parts;
     // set to true to debug
     this.debug = debug;
     // fields to be used later
-    this.meshFactory = null;
     this.whenIntegrated = null;
     this.partsIntegrated = 0;
+    this.partsLoaded = 0;
     this.rotateCounter = 0;
     this.partCount = 0;
     // make sure my parts know me
     for (var partIndex in parts) {
       var part = parts[partIndex];
-      this.partCount += part.partCount + 1;
-      part.robot = this;
+      console.log(part.name + ": " + part.partCount + " parts");
+      this.partCount += part.partCount;
+      part.setRobot(this);
     }
   }
 
+  // recursively set debug flag
   setDebug(pDebug = true) {
     this.debug = pDebug;
     for (var partIndex in this.parts) {
@@ -310,8 +352,16 @@ class Robot {
     }
   }
 
+  // resursively set Robot
+  setRobot(pRobot) {
+    this.robot = pRobot;
+    for (var partIndex in this.parts) {
+      this.parts[partIndex].setRobot(pRobot);
+    }
+  }
+
   // construct a Robot from the given JSON Object
-  static fromJsonObj(meshFactory, robotObj, debug = false) {
+  static fromJsonObj(robotObj, debug = false) {
     // first create the array of parts
     var parts = [];
     for (var partIndex in robotObj.parts) {
@@ -321,16 +371,16 @@ class Robot {
       parts.push(part);
     }
     // now call the constructor (which will add back pointers to the robot for each part)
-    var robot = new Robot(meshFactory, robotObj.name, robotObj.url, parts);
+    var robot = new Robot(robotObj.name, robotObj.url, parts);
     return robot;
   }
 
   // construct a Robot from the given json String
-  static fromJson(meshFactory, robotJson) {
+  static fromJson(robotJson) {
     // parse the JSON string
     var robotObj = JSON.parse(robotJson);
     // construct Robot from the Json Object
-    return fromJsonobj(meshFactory, robotObj);
+    return fromJsonobj(robotObj);
   }
 
   // load all my parts with the given scene and call the given whenIntegrated callback when done
@@ -340,22 +390,28 @@ class Robot {
     for (var partsIndex in this.parts) {
       var part = this.parts[partsIndex];
       // integratePart will be called when finished
-      part.load(meshFactory);
+      part.load();
+    }
+  }
+
+  // call back for parts being loaded
+  partLoaded(part) {
+    this.partsLoaded++;
+    if (this.partsLoaded == this.partCount) {
+      console.log("all " + this.partCount + " parts of " + this.name + " loaded")
+      this.fullyLoaded();
     }
   }
 
   // finalize the loading of the given part - will call whenIntegrated when all parts have been integrated
   integratePart(part) {
-    this.partsIntegrated++;
-    if (this.partsIntegrated == this.partCount) {
-      console.log("all " + this.partsIntegrated + " parts of " + this.name + " integrated")
-      this.fullyLoaded();
-    }
+    this.partsIntegrated += part.partCount;
+    console.log("integrating " + part.name + ": " + part.partCount + " parts =>" + this.partsIntegrated + "/" + this.partCount);
   }
 
   fullyLoaded() {
     for (var partIndex in this.parts) {
-      this.parts[partIndex].fullyLoaded(meshFactory);
+      this.parts[partIndex].fullyLoaded();
     }
     // call the whenIntegrated callback
     if (this.whenIntegrated) {
