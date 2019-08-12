@@ -161,20 +161,24 @@ class ChildPart {
     };
   }
 
-  //  adjust me relative to the given (pivot) mesh
-  adjustRelative(toMesh) {
+  static adjustRelativeTo(mesh,toMesh) {
     //logSelected("adjusting toMesh",toMesh);
     //logSelected("beforeAdjust",this.mesh);
     toMesh.updateMatrixWorld(); // important !
-    this.mesh.applyMatrix(new THREE.Matrix4().getInverse(toMesh.matrixWorld));
+    mesh.applyMatrix(new THREE.Matrix4().getInverse(toMesh.matrixWorld));
     //logSelected("afterAdjust",this.mesh);
+  }
+
+  //  adjust me relative to the given (pivot) mesh
+  adjustRelative(toMesh) {
+    ChildPart.adjustRelativeTo(this.mesh,toMesh);
   }
 
   // add my bounding box wire to the given mesh
   addBoundingBoxWire(toMesh) {
     var boxwire = new THREE.BoxHelper(this.mesh, 0xff8000);
-    this.boxwire;
-    boxwire.update();
+    this.boxwire=boxwire;
+    ChildPart.adjustRelativeTo(boxwire,toMesh);
     toMesh.add(boxwire);
   }
 

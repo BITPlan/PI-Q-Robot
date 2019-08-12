@@ -41,7 +41,7 @@ var options = {
   rotateX: false,
   rotateY: false,
   rotateZ: false,
-  byAxis: true,
+  byAxis: false,
   x: 0,
   y: 0,
   z: 0,
