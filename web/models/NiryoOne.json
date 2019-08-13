@@ -20,36 +20,37 @@
     "x": -1,
     "y": 166,
     "z": -12,
-    "rx": 0,
+    "rx": 270,
     "ry": 0,
     "rz": 0,
     "pivot": {
       "dx": 0,
-      "dy": -20,
-      "dz":  0,
-      "rx": 270,
+      "dy": -50,
+      "dz": 0,
+      "rx": 90,
       "ry": 0,
       "rz": 0,
       "radius": 10
     },
-    "stl": "/models/stl/niryo/2-Shoulder_NiryoOne_V2.0.STL"
-  }, {
-    "name": "Arm",
-    "x": 0,
-    "y": 250,
-    "z": 90,
-    "rx": 0,
-    "ry": 100,
-    "rz": 0,
-    "pivot": {
-      "x":  0,
-      "y":  250,
-      "z":  0,
+    "stl": "/models/stl/niryo/2-Shoulder_NiryoOne_V2.0.STL",
+    "parts": [{
+      "name": "Arm",
+      "x": 104,
+      "y": 192,
+      "z": 0,
       "rx": 0,
       "ry": 0,
       "rz": 0,
-      "radius": 10
-    },
-    "stl": "/models/stl/niryo/3-Arm_NiryoOne_V2.0.STL"
+      "pivot": {
+        "dx": -93,
+        "dy": -9,
+        "dz": 0,
+        "rx": 90,
+        "ry": 0,
+        "rz": 0,
+        "radius": 10
+      },
+      "stl": "/models/stl/niryo/3-Arm_NiryoOne_V2.0.STL"
+    }]
   }]
 }

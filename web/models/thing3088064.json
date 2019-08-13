@@ -14,7 +14,15 @@
     "rx": 0,
     "ry": 0,
     "rz": 0,
-    "joint": 4,
+    "pivot": {
+      "dx": 0,
+      "dy": 0,
+      "dz": 0,
+      "rx": 0,
+      "ry": 0,
+      "rz": 0,
+      "radius": 4
+    },
 
     "parts": [{
       "name": "Piece 1 part",
@@ -30,10 +38,18 @@
         "x": -77,
         "y": 122,
         "z": 121.5,
-        "rx": 90,
+        "rx": 0,
         "ry": 0,
-        "rz": 90,
-        "joint": 4,
+        "rz": 0,
+        "pivot": {
+          "dx": 0,
+          "dy": 0,
+          "dz": 0,
+          "rx": 90,
+          "ry": 0,
+          "rz": 0,
+          "radius": 4
+        },
 
         "parts": [{
             "name": "Piece 2 top",

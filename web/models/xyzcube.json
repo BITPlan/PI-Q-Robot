@@ -1,0 +1,64 @@
+{
+  "name": "XYZ-Calibration cube",
+  "url": "https://www.thingiverse.com/thing:1278865",
+  "camera": {
+    "x": -124.6,
+    "y": 230,
+    "z": 268
+  },
+  "parts": [{
+    "name": "Cube1",
+    "x": 0,
+    "y": 12,
+    "z": 0,
+    "rx": 270,
+    "ry": 0,
+    "rz": 0,
+    "stl": "/models/stl/xyz/xyzCalibration_cube.stl",
+    "pivot": {
+      "dx": 0,
+      "dy": -10,
+      "dz": 0,
+      "rx": 90,
+      "ry": 0,
+      "rz": 0,
+      "radius": 2
+    }
+  },{
+    "name": "Cube2",
+    "x": 40,
+    "y": 12,
+    "z": 0,
+    "rx": 270,
+    "ry": 0,
+    "rz": 0,
+    "stl": "/models/stl/xyz/xyzCalibration_cube.stl",
+    "pivot": {
+      "dx": 0,
+      "dy": 0,
+      "dz": -10,
+      "rx": 0,
+      "ry": 90,
+      "rz": 0,
+      "radius": 2
+    }
+  },{
+    "name": "Cube3",
+    "x": 80,
+    "y": 12,
+    "z": 0,
+    "rx": 270,
+    "ry": 0,
+    "rz": 0,
+    "stl": "/models/stl/xyz/xyzCalibration_cube.stl",
+    "pivot": {
+      "dx":  0,
+      "dy": -10,
+      "dz": -10,
+      "rx": 0,
+      "ry": 0,
+      "rz": 90,
+      "radius": 2
+    }
+  }]
+}

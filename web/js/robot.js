@@ -348,10 +348,10 @@ class Part extends ChildPart {
       this.addSizeArrows();
     var radius = this.pivot.radius;
     // height in normal "up" rotation
-    var height = this.size.x;
+    var height = this.size.z;
     // are we rotate in x direction (90 or 270 degrees)
     if (this.rx == 90 || this.rx == 270) {
-      height = this.size.z;
+      height = this.size.x;
     }
     var meshFactory = MeshFactory.getInstance();
     // cylinder
@@ -516,9 +516,9 @@ class Robot {
     for (var partsIndex in this.allParts) {
       var part = this.allParts[partsIndex];
       if (part.pivot !== null) {
-        options[part.name + ".rx"] = part.rx;
-        options[part.name + ".ry"] = part.ry;
-        options[part.name + ".rz"] = part.rz;
+        options[part.name + ".rx"] = part.pivot.rx;
+        options[part.name + ".ry"] = part.pivot.ry;
+        options[part.name + ".rz"] = part.pivot.rz;
         // TODO make range configurable
         gui.add(options, part.name + ".rx", -180, 180).listen();
         gui.add(options, part.name + ".ry", -180, 180).listen();

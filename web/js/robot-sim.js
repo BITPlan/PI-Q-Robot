@@ -36,7 +36,7 @@ scene.add(light);
 var options = {
   zoom: 1,
   controls: true,
-  rotation: false,
+  rotation: true,
   byAxis: false,
   x: 0,
   y: 0,
