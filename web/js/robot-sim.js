@@ -1,4 +1,3 @@
-
 // create a scene
 near = 1;
 far = 1000;
@@ -37,10 +36,7 @@ scene.add(light);
 var options = {
   zoom: 1,
   controls: true,
-  rotation: true,
-  rotateX: false,
-  rotateY: false,
-  rotateZ: false,
+  rotation: false,
   byAxis: false,
   x: 0,
   y: 0,
@@ -78,9 +74,6 @@ infoFolder.add(options, 'screenheight').listen();
 gui.add(options, 'zoom', 0.1, 10).listen();
 gui.add(options, 'controls').listen();
 gui.add(options, 'rotation').listen();
-gui.add(options, 'rotateX').listen();
-gui.add(options, 'rotateY').listen();
-gui.add(options, 'rotateZ').listen();
 gui.add(options, 'byAxis').listen();
 gui.add(options, 'px', -200, 200).listen();
 gui.add(options, 'py', -200, 200).listen();
@@ -112,20 +105,20 @@ var yAxis = new THREE.Vector3(0, 1, 0);
 var xAxis = new THREE.Vector3(1, 0, 0);
 
 // prepare Renderer
-var renderContainer=document.body;
-var renderWidth=window.innerWidth;
-var renderHeight=window.innerHeight;
+var renderContainer = document.body;
+var renderWidth = window.innerWidth;
+var renderHeight = window.innerHeight;
 
 // are we configured to run in dom element e.g. div?
 if (typeof renderId !== 'undefined') {
-  renderContainer= document.getElementById(renderId);
-  renderWidth=renderContainer.offsetWidth;
-  renderHeight=renderContainer.offsetHeight;
-  if (renderHeight==0)
-    renderHeight=window.innerHeight;
+  renderContainer = document.getElementById(renderId);
+  renderWidth = renderContainer.offsetWidth;
+  renderHeight = renderContainer.offsetHeight;
+  if (renderHeight == 0)
+    renderHeight = window.innerHeight;
 }
-console.log("creating "+renderWidth+" x "+renderHeight+" renderer")
-var renderer = createRenderer(renderWidth,renderHeight);
+console.log("creating " + renderWidth + " x " + renderHeight + " renderer")
+var renderer = createRenderer(renderWidth, renderHeight);
 renderContainer.appendChild(renderer.domElement);
 
 controls = createControls();
@@ -149,7 +142,7 @@ var material = new THREE.MeshPhongMaterial({
 
 var loader = new THREE.STLLoader();
 // create MeshFactory - available via MeshFactory.getInstance()
-var meshFactory = new MeshFactory(scene,loader,material, 64);
+var meshFactory = new MeshFactory(scene, loader, material, 64);
 
 const urlParams = new URLSearchParams(window.location.search);
 urlParams.forEach((value, key) => {
@@ -162,7 +155,7 @@ urlParams.forEach((value, key) => {
   }
 });
 
-var robot=null;
+var robot = null;
 
 if (typeof robotUrl === "undefined") {
   alert('missing robot json definition - robotUrl is undefined');
@@ -175,8 +168,12 @@ if (typeof robotUrl === "undefined") {
       robot = Robot.fromJsonObj(robotObj);
       robot.setDebug(true);
       robot.loadParts(function whenIntegrated() {
-        robot.addGUI(gui,options);
+        robot.addGUI(gui, options);
       });
+      if (robot.camera) {
+        var cp = robot.camera;
+        camera.position.set(cp.x, cp.y, cp.z);
+      }
     })
     .catch(err => {
       throw err
@@ -188,7 +185,7 @@ var render = function() {
 
   if (options.rotation) {
     if (robot)
-      robot.rotateJoints(scene,options);
+      robot.rotateJoints(scene, options);
   }
   movep = selectedObject;
   if (movep) {

@@ -326,9 +326,10 @@ class Part extends ChildPart {
 // a robot consists of a name and a list of parts
 class Robot {
   // construct me with the given name, url to my source (copyright) and array of parts
-  constructor(name, url, parts, debug = false) {
+  constructor(name, url, camera,parts, debug = false) {
     this.name = name;
     this.url = url;
+    this.camera = camera;
     this.parts = parts;
     // set to true to debug
     this.debug = debug;
@@ -361,7 +362,7 @@ class Robot {
       parts.push(part);
     }
     // now call the constructor (which will add back pointers to the robot for each part)
-    var robot = new Robot(robotObj.name, robotObj.url, parts);
+    var robot = new Robot(robotObj.name, robotObj.url,robotObj.camera,parts);
     return robot;
   }
 
@@ -434,9 +435,13 @@ class Robot {
     for (var partsIndex in this.allParts) {
       var part = this.allParts[partsIndex];
       if (part.joint !== null) {
-        options[part.name] = part.joint;
+        options[part.name+".rx"] = part.rx;
+        options[part.name+".ry"] = part.ry;
+        options[part.name+".rz"] = part.rz;
         // TODO make range configurable
-        gui.add(options, part.name, -180, 180).listen();
+        gui.add(options, part.name+".rx", -180, 180).listen();
+        gui.add(options, part.name+".ry", -180, 180).listen();
+        gui.add(options, part.name+".rz", -180, 180).listen();
       }
     }
   }
@@ -449,7 +454,9 @@ class Robot {
       if (part.joint !== null) {
         var mesh = scene.getObjectByName(part.name);
         if (mesh) {
-          var angle = options[part.name];
+          var rx = options[part.name+".rx"];
+          var ry = options[part.name+".ry"];
+          var rz = options[part.name+".rz"];
           // be careful when uncommenting this for debugging - this is triggered on every render request
           // at the fps your computer is capable of
           this.rotateCounter++;
@@ -459,19 +466,13 @@ class Robot {
               logSelected("preRotate", mesh);
           */
           if (options.byAxis) {
-            if (options.rotateX)
-              mesh.setRotationFromAxisAngle(xAxis, deg2rad(angle));
-            if (options.rotateY)
-              mesh.setRotationFromAxisAngle(yAxis, deg2rad(angle));
-            if (options.rotateZ)
-              mesh.setRotationFromAxisAngle(zAxis, deg2rad(angle));
+            mesh.setRotationFromAxisAngle(xAxis, deg2rad(rx));
+            mesh.setRotationFromAxisAngle(yAxis, deg2rad(ry));
+            mesh.setRotationFromAxisAngle(zAxis, deg2rad(rz));
           } else {
-            if (options.rotateX)
-              mesh.rotation.x = deg2rad(angle);
-            if (options.rotateY)
-              mesh.rotation.y = deg2rad(angle);
-            if (options.rotateZ)
-              mesh.rotation.z = deg2rad(angle);
+            mesh.rotation.x = deg2rad(rx);
+            mesh.rotation.y = deg2rad(ry);
+            mesh.rotation.z = deg2rad(rz);
           }
           /*
           if (this.debug)
