@@ -1,0 +1,55 @@
+{
+  "name": "NiryoOne",
+  "url": "https://github.com/NiryoRobotics/niryo_one",
+  "camera": {
+    "x": -124.6,
+    "y": 230,
+    "z": 268
+  },
+  "parts": [{
+    "name": "Base",
+    "x": 0,
+    "y": 52,
+    "z": 0,
+    "rx": 270,
+    "ry": 0,
+    "rz": 0,
+    "stl": "/models/stl/niryo/1-Base_NiryoOne_V2.0.STL"
+  }, {
+    "name": "Shoulder",
+    "x": -1,
+    "y": 166,
+    "z": -12,
+    "rx": 0,
+    "ry": 0,
+    "rz": 0,
+    "pivot": {
+      "dx": 0,
+      "dy": -20,
+      "dz":  0,
+      "rx": 270,
+      "ry": 0,
+      "rz": 0,
+      "radius": 10
+    },
+    "stl": "/models/stl/niryo/2-Shoulder_NiryoOne_V2.0.STL"
+  }, {
+    "name": "Arm",
+    "x": 0,
+    "y": 250,
+    "z": 90,
+    "rx": 0,
+    "ry": 100,
+    "rz": 0,
+    "pivot": {
+      "x":  0,
+      "y":  250,
+      "z":  0,
+      "rx": 0,
+      "ry": 0,
+      "rz": 0,
+      "radius": 10
+    },
+    "stl": "/models/stl/niryo/3-Arm_NiryoOne_V2.0.STL"
+  }]
+}
