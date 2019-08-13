@@ -5,14 +5,14 @@ class MeshFactory {
   }
 
   // create me with the given scene, loader, default material and default segments
-  constructor(scene,loader,material, segments) {
-    this.scene=scene;
-    this.loader=loader;
+  constructor(scene, loader, material, segments) {
+    this.scene = scene;
+    this.loader = loader;
     this.material = material;
     this.segments = segments;
-    this.selectionColor='blue';
-    this.pivotColor='red';
-    MeshFactory.instance=this;
+    this.selectionColor = 'blue';
+    this.pivotColor = 'red';
+    MeshFactory.instance = this;
   }
 
   // creates a cylinder with given radius and height
@@ -49,6 +49,34 @@ class MeshFactory {
     var material = this.material;
     if (cloned) material = material.clone();
     return material;
+  }
+}
+
+class SceneDebug {
+  constructor(scene) {
+    this.scene = scene;
+
+  }
+  asString(x, y, z, v, f=1) {
+    return "(" + x + ":" + (v.x*f).toFixed(1) + " " + y + ":" + (v.y*f).toFixed(1) + " " + z + ":" + (v.z*f).toFixed(1) + ")";
+  }
+  showObject(indent, obj) {
+    if (obj.name) {
+      console.log(indent + obj.name + this.asString("x", "y", "z", obj.position) + this.asString("rx", "ry", "rz", obj.rotation,180/Math.PI));
+    }
+  }
+
+  showTree(indent, root) {
+    this.showObject(indent, root);
+
+    for (var childIndex in root.children) {
+      var child = root.children[childIndex];
+      this.showTree(indent + "  ", child);
+    }
+  }
+
+  show() {
+    this.showTree("", this.scene);
   }
 }
 
@@ -145,7 +173,7 @@ function createTrackballControls() {
 }
 
 function createOrbitControls() {
-  controls=new THREE.OrbitControls( camera, renderer.domElement );
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
   return controls;
 }
 
@@ -210,27 +238,27 @@ var oldSelected;
 var oldColor;
 
 // log that an object has been seleted / unselected
-function logSelected(prefix,selectedObject) {
-  var color="?";
-  if (typeof selectedObject.material !== "undefined" ) {
-    color=JSON.stringify(selectedObject.material.color);
+function logSelected(prefix, selectedObject) {
+  var color = "?";
+  if (typeof selectedObject.material !== "undefined") {
+    color = JSON.stringify(selectedObject.material.color);
   }
-  var position=" position: "+JSON.stringify(selectedObject.position);
-  var rotation=" rotation: "+JSON.stringify(selectedObject.rotation);
-  console.log(prefix+" "+selectedObject.name+"("+selectedObject.uuid + ")" + position + rotation + " color: "+color);
+  var position = " position: " + JSON.stringify(selectedObject.position);
+  var rotation = " rotation: " + JSON.stringify(selectedObject.rotation);
+  console.log(prefix + " " + selectedObject.name + "(" + selectedObject.uuid + ")" + position + rotation + " color: " + color);
   // console.log(prefix+" oldcolor:"+JSON.stringify(oldColor)+" oldSelected:"+JSON.stringify(oldSelected));
 }
 
 function unMarkSelected(selectedObject) {
-  selectedObject.material.color=oldColor;
-  logSelected("unmark",selectedObject);
-  oldSelected=null;
+  selectedObject.material.color = oldColor;
+  logSelected("unmark", selectedObject);
+  oldSelected = null;
 }
 
 // mark the selected object
 // and remember the old color
 function markSelected(selectedObject) {
-  logSelected("mark",selectedObject);
+  logSelected("mark", selectedObject);
   showSelected(selectedObject);
   oldColor = selectedObject.material.color.clone();
   oldSelected = selectedObject;
@@ -241,7 +269,7 @@ function markSelected(selectedObject) {
 // via dat.gui if options are available
 function showSelected(selectedObject) {
   // logSelected("show",selectedObject);
-  if (typeof options !== "undefined" ) {
+  if (typeof options !== "undefined") {
     options.selected = selectedObject.name;
     options.x = selectedObject.position.x;
     options.y = selectedObject.position.y;
@@ -276,11 +304,11 @@ function onDocumentMouseDown(event) {
  *
  */
 function onWindowResize() {
-  var width=renderer.domElement.parentNode.offsetWidth; // window.innerWidth;
-  var height=window.innerHeight; //renderer.domElement.parentNode.offsetHeight;
-  camera.aspect = width/height;
+  var width = renderer.domElement.parentNode.offsetWidth; // window.innerWidth;
+  var height = window.innerHeight; //renderer.domElement.parentNode.offsetHeight;
+  camera.aspect = width / height;
   camera.updateProjectionMatrix();
-  renderer.setSize(width,height);
+  renderer.setSize(width, height);
 }
 
 function addListeners() {

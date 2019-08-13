@@ -169,6 +169,8 @@ if (typeof robotUrl === "undefined") {
       robot.setDebug(true);
       robot.loadParts(function whenIntegrated() {
         robot.addGUI(gui, options);
+        var sd=new SceneDebug(scene);
+        sd.show();
       });
       if (robot.camera) {
         var cp = robot.camera;
