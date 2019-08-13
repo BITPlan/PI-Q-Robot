@@ -57,12 +57,25 @@ class SceneDebug {
     this.scene = scene;
 
   }
-  asString(x, y, z, v, f=1) {
-    return "(" + x + ":" + (v.x*f).toFixed(1) + " " + y + ":" + (v.y*f).toFixed(1) + " " + z + ":" + (v.z*f).toFixed(1) + ")";
+  asString(x, y, z, v, f = 1) {
+    return "(" + x + ":" + (v.x * f).toFixed(1) + " " + y + ":" + (v.y * f).toFixed(1) + " " + z + ":" + (v.z * f).toFixed(1) + ")";
   }
+
+  // show the world and local coordinates
   showObject(indent, obj) {
     if (obj.name) {
-      console.log(indent + obj.name + this.asString("x", "y", "z", obj.position) + this.asString("rx", "ry", "rz", obj.rotation,180/Math.PI));
+      // see https://stackoverflow.com/a/35063563/1497139
+      var wt = new THREE.Vector3(),
+        wr = new THREE.Quaternion(),
+        ws = new THREE.Vector3();
+      obj.matrixWorld.decompose(wt, wr, ws);
+      var wts=this.asString("wx","wy","wz",wt)
+      var wrs=this.asString("wrx","wry","wrz",wr,180 / Math.PI)
+      console.log(indent + obj.name +
+        wts+
+        wrs+
+        this.asString("x", "y", "z", obj.position) +
+        this.asString("rx", "ry", "rz", obj.rotation, 180 / Math.PI));
     }
   }
 

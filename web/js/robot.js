@@ -57,6 +57,9 @@ class Pivot extends BasePart {
   integrate(part) {
     var mesh = new THREE.Group();
     this.initializeMesh(mesh);
+    // make sure the Pivot is linked correctly into the hierarchy
+    if (part.mesh.parent)
+      part.mesh.parent.attach(mesh);
     mesh.add(part.mesh);
     ChildPart.adjustRelativeTo(part.mesh, this.mesh);
   }
@@ -237,6 +240,7 @@ class ChildPart extends BasePart {
       // integrate me directly with robot
       this.robot.integratePart(this);
     }
+    // do we have a pivot?
     if (this.pivot) {
       this.pivot.integrate(this);
     }
@@ -303,9 +307,8 @@ class Part extends ChildPart {
   integrateChild(childPart) {
     console.log("adding " + childPart.name + " to " + this.name);
     // https://stackoverflow.com/a/26413121/1497139
-    // this.mesh.attach(childPart.mesh);
+    //this.mesh.attach(childPart.mesh);
     this.mesh.add(childPart.mesh);
-
     childPart.adjustRelative(this.mesh);
 
     this.partsIntegrated++;
