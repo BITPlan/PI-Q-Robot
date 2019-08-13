@@ -11,7 +11,7 @@ class MeshFactory {
     this.material = material;
     this.segments = segments;
     this.selectionColor='blue';
-    this.jointColor='red';
+    this.pivotColor='red';
     MeshFactory.instance=this;
   }
 

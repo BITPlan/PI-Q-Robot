@@ -1,12 +1,7 @@
-// a part has a name and an stl url and position and rotation vector coordinates
-class ChildPart {
-
-  // construct me with the given name from the given stl url
-  // with the given position x,y,z and
-  // rotation rx,ry,rz
-  constructor(name, stl, x, y, z, rx, ry, rz, debug = false) {
+// a part has a name and position and rotation vector coordinates
+class BasePart {
+  constructor(name, x, y, z, rx, ry, rz, debug = false) {
     this.name = name;
-    this.stl = stl;
     this.x = x;
     this.y = y;
     this.z = z;
@@ -14,20 +9,83 @@ class ChildPart {
     this.ry = ry;
     this.rz = rz;
     this.debug = debug;
-    this.partCount = 1;
-    // create attributes to be used later
-    this.joint = null;
-    this.robot = null;
-    this.parent = null;
     this.mesh = null;
     this.error = null;
+  }
+
+  // initialize the mesh for this part
+  initializeMesh(mesh) {
+    // add bidirectional references from mesh to part
+    this.mesh = mesh;
+    // make the part available in the userdata of the mesh
+    mesh.userData['part'] = this;
+    // rotate mesh as requested
+    mesh.rotation.set(deg2rad(this.rx), deg2rad(this.ry), deg2rad(this.rz));
+    mesh.position.set(this.x, this.y, this.z);
+    // mesh.scale.set(0.5, 0.5, 0.5);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    mesh.name = this.name;
+    MeshFactory.getInstance().scene.add(mesh);
+  }
+}
+
+class Pivot extends BasePart {
+  constructor(name, x, y, z, rx, ry, rz, radius, debug = false) {
+    super(name, x, y, z, rx, ry, rz, debug);
+    this.radius = radius;
+  }
+
+  static fromJsonObjForPart(part, o) {
+    var name = part.name + "-pivot";
+    var x = o.x;
+    var y = o.y;
+    var z = o.z;
+    if (typeof o.dx !== "undefined") {
+      x = part.x + o.dx;
+    }
+    if (typeof o.dy !== "undefined") {
+      y = part.y + o.dy;
+    }
+    if (typeof o.dz !== "undefined") {
+      z = part.z + o.dz;
+    }
+    var pivot = new Pivot(name, x, y, z, o.rx, o.ry, o.rz, o.radius);
+    return pivot;
+  }
+
+  integrate(part) {
+    var mesh = new THREE.Group();
+    this.initializeMesh(mesh);
+    mesh.add(part.mesh);
+    ChildPart.adjustRelativeTo(part.mesh, this.mesh);
+  }
+}
+
+// a child part is a basepart with an optional stl file to load from
+class ChildPart extends BasePart {
+
+  // construct me with the given name from the given stl url
+  // with the given position x,y,z and
+  // rotation rx,ry,rz
+  constructor(name, stl, x, y, z, rx, ry, rz, debug = false) {
+    super(name, x, y, z, rx, ry, rz, debug);
+    this.stl = stl;
+    // create attributes to be used later
+    this.partCount = 1;
+    this.pivot = null;
+    this.robot = null;
+    this.parent = null;
     this.showProgress = false;
-    this.allParts= null;
+    this.allParts = null;
   }
 
   // calculate the size of this part by creating a bounding box around it
   calcSize() {
-    var bbox = new THREE.Box3().setFromObject(this.mesh);
+    var bboxwire = this.getBoundingBoxWire();
+    ChildPart.adjustRelativeTo(bboxwire, this.mesh);
+    var bbox = new THREE.Box3();
+    bbox.setFromObject(bboxwire);
     this.bbox = bbox;
     this.size = new THREE.Vector3(
       bbox.max.x - bbox.min.x,
@@ -42,48 +100,6 @@ class ChildPart {
         JSON.stringify(bbox.min) +
         JSON.stringify(bbox.max)
       );
-  }
-
-  // call pack when loading is finished for a given part
-  static onLoaded(part) {
-    part.loaded()
-  }
-
-  loaded() {
-    if (!this.mesh) {
-      console.log("error: loaded called but mesh not set for " + this.name)
-      return;
-    }
-    this.mesh.position.set(this.x, this.y, this.z)
-    // make clickable and potentially draggable
-    objects.push(this.mesh);
-    this.robot.partLoaded(this);
-  }
-
-  // called when all parts have been loaded
-  fullyLoaded() {
-    // integrate this part into the hierachy
-    this.integrate();
-    // then calculate my size
-    this.calcSize();
-  }
-
-  // abstract hierarchy integration for ChildPart
-  integrate() {
-    // if i am a child part integrate me via my parent part
-    if (this.parent) {
-      var parentMesh = MeshFactory.getInstance().scene.getObjectByName(this.parent);
-      if (!parentMesh) {
-        console.log('error: parentMesh ' + this.parent + ' not available yet for ' + this.name);
-        return;
-      }
-      var parentPart = parentMesh.userData['part'];
-      // tell my parent that i'd like to be integrated
-      parentPart.integrateChild(this);
-    } else {
-      // integrate me directly with robot
-      this.robot.integratePart(this);
-    }
   }
 
   /**
@@ -134,26 +150,13 @@ class ChildPart {
     function onLoad(geometry) {
       var material = MeshFactory.getInstance().material.clone();
       var mesh = new THREE.Mesh(geometry, material);
-      mesh.up.set(0, 1, 0);
-      // mesh.position.set(x, y, z);
       geometry.center();
       onCreate(mesh, "loading from url " + part.stl);
     }
 
     // callback on creation of loaded mesh
     function onCreate(mesh, msg) {
-      // add bidirectional references from mesh to part
-      part.mesh = mesh;
-      // make the part available in the userdata of the mesh
-      mesh.userData['part'] = part;
-      // rotate mesh as requested
-      mesh.rotation.set(deg2rad(part.rx), deg2rad(part.ry), deg2rad(part.rz));
-
-      // mesh.scale.set(0.5, 0.5, 0.5);
-      mesh.castShadow = true;
-      mesh.receiveShadow = true;
-      mesh.name = part.name;
-      MeshFactory.getInstance().scene.add(mesh);
+      part.initializeMesh(mesh);
       if (whenDone) {
         console.log(part.name + ": " + msg + " finished")
         whenDone(part)
@@ -161,7 +164,7 @@ class ChildPart {
     };
   }
 
-  static adjustRelativeTo(mesh,toMesh) {
+  static adjustRelativeTo(mesh, toMesh) {
     //logSelected("adjusting toMesh",toMesh);
     //logSelected("beforeAdjust",this.mesh);
     toMesh.updateMatrixWorld(); // important !
@@ -171,14 +174,18 @@ class ChildPart {
 
   //  adjust me relative to the given (pivot) mesh
   adjustRelative(toMesh) {
-    ChildPart.adjustRelativeTo(this.mesh,toMesh);
+    ChildPart.adjustRelativeTo(this.mesh, toMesh);
+  }
+
+  getBoundingBoxWire() {
+    var boxwire = new THREE.BoxHelper(this.mesh, 0xff8000);
+    return boxwire;
   }
 
   // add my bounding box wire to the given mesh
   addBoundingBoxWire(toMesh) {
-    var boxwire = new THREE.BoxHelper(this.mesh, 0xff8000);
-    this.boxwire=boxwire;
-    ChildPart.adjustRelativeTo(boxwire,toMesh);
+    var boxwire = this.getBoundingBoxWire();
+    ChildPart.adjustRelativeTo(boxwire, toMesh);
     toMesh.add(boxwire);
   }
 
@@ -192,6 +199,67 @@ class ChildPart {
   addBoxWireAndAxesHelper(toMesh) {
     this.addBoundingBoxWire(toMesh);
     this.addAxesHelper(toMesh);
+  }
+
+  // call pack when loading is finished for a given part
+  static onLoaded(part) {
+    part.loaded()
+  }
+
+  loaded() {
+    if (!this.mesh) {
+      console.log("error: loaded called but mesh not set for " + this.name)
+      return;
+    }
+    // make clickable and potentially draggable
+    objects.push(this.mesh);
+    this.robot.partLoaded(this);
+  }
+
+  getParentPart() {
+    var parentMesh = MeshFactory.getInstance().scene.getObjectByName(this.parent);
+    if (!parentMesh) {
+      console.log('error: parentMesh ' + this.parent + ' not available yet for ' + this.name);
+      return;
+    }
+    var parentPart = parentMesh.userData['part'];
+    return parentPart;
+  }
+
+  // abstract hierarchy integration for ChildPart
+  integrate() {
+    // if i am a child part integrate me via my parent part
+    if (this.parent) {
+      var parentPart = this.getParentPart();
+      // tell my parent that i'd like to be integrated
+      parentPart.integrateChild(this);
+    } else {
+      // integrate me directly with robot
+      this.robot.integratePart(this);
+    }
+    if (this.pivot) {
+      this.pivot.integrate(this);
+    }
+  }
+
+  // called when all parts have been loaded
+  fullyLoaded() {
+    // integrate this part into the hierachy
+    this.integrate();
+    // then calculate my size
+    this.calcSize();
+    if (this.debug) {
+      this.addBoundingBoxWire(this.mesh);
+      /*if (this.parent) {
+        var parentPart = this.getParentPart();
+        // show bounding box wire frame for debugging
+        console.log("adding Boxwire for " + this.name + " to " + parentPart.name)
+        this.addBoundingBoxWire(parentPart.mesh);
+      } else {
+        var boxwire=this.getBoundingBoxWire();
+        MeshFactory.getInstance().scene.add(boxwire);
+      }*/
+    }
   }
 
   // load me
@@ -215,8 +283,8 @@ class Part extends ChildPart {
   // construct a part from the given Json Object allowing a hierachy of parts to be created
   static fromJsonObj(partJsonObj) {
     var part = new Part(partJsonObj.name, partJsonObj.stl, partJsonObj.x, partJsonObj.y, partJsonObj.z, partJsonObj.rx, partJsonObj.ry, partJsonObj.rz);
-    if (typeof partJsonObj.joint !== "undefined") {
-      part.joint = partJsonObj.joint;
+    if (typeof partJsonObj.pivot !== "undefined") {
+      part.pivot = Pivot.fromJsonObjForPart(part, partJsonObj.pivot);
     }
     // are there any subparts?
     if (typeof partJsonObj.parts !== "undefined") {
@@ -257,32 +325,50 @@ class Part extends ChildPart {
     }
   }
 
+  addArrow(dir, len, color) {
+    // see e.g. https://codepen.io/arpo/pen/LkXYGQ/?editors=0010
+    var arrow = new THREE.ArrowHelper(dir, this.pivot.mesh.position, len, color);
+    ChildPart.adjustRelativeTo(arrow, this.pivot.mesh);
+    this.mesh.add(arrow);
+  }
+
+  addSizeArrows() {
+    var xa = new THREE.Vector3(1, 0, 0);
+    var ya = new THREE.Vector3(0, 1, 0);
+    var za = new THREE.Vector3(0, 0, 1);
+    // https://stackoverflow.com/a/48729691/1497139
+    this.addArrow(xa, this.size.x / 2, 'red');
+    this.addArrow(ya, this.size.y / 2, 'green');
+    this.addArrow(za, this.size.z / 2, 'blue');
+  }
+
   // create a visible pivot Joint
   createPivotJoint() {
-    var radius = this.joint;
+    if (this.debug)
+      this.addSizeArrows();
+    var radius = this.pivot.radius;
     // height in normal "up" rotation
-    var height = this.size.y;
+    var height = this.size.x;
     // are we rotate in x direction (90 or 270 degrees)
     if (this.rx == 90 || this.rx == 270) {
       height = this.size.z;
     }
     var meshFactory = MeshFactory.getInstance();
     // cylinder
-    var pivot = meshFactory.createCylinder(
+    var pivotJoint = meshFactory.createCylinder(
       radius,
       height,
       true
     );
-    // sphere
+    // TODO use sphere when pivot can be rotated around all axes
     // pivot=MeshFactory.getInstance().createSphere(pivotr,true);
-    // @TODO  make configurable e.g. via MeshFactory
-    pivot.material.color.set(meshFactory.jointColor);
-    return pivot;
+    pivotJoint.material.color.set(meshFactory.pivotColor);
+    return pivotJoint;
   }
 
   // recursively get all parts
   getAllParts() {
-    this.allParts=this.parts.slice(0); // clone the parts
+    this.allParts = this.parts.slice(0); // clone the parts
     for (var partsIndex in this.parts) {
       var part = this.parts[partsIndex];
       if (typeof part.getAllParts !== "undefined") {
@@ -300,24 +386,19 @@ class Part extends ChildPart {
     for (var partsIndex in this.parts) {
       var part = this.parts[partsIndex];
       part.fullyLoaded();
-      if (this.debug) {
-        // show bounding box wire frame for debugging
-        console.log("adding Boxwire for " + part.name + " to " + this.name)
-        part.addBoundingBoxWire(this.mesh);
-      }
     }
     // then myself
     super.fullyLoaded();
     if (this.debug) {
-      if (this.joint !== null) {
+      if (this.pivot !== null) {
         var pivotJoint = this.createPivotJoint();
-        pivotJoint.name = this.name + "pivotJoint";
+        pivotJoint.name = this.name + "-pivot.Joint";
         // for debugging
         objects.push(pivotJoint);
-        this.mesh.add(pivotJoint);
+        this.pivot.mesh.add(pivotJoint);
         // show axes and bounding box wire frame for debugging
         console.log("adding axes helper to joint/pivot " + this.name)
-        this.addAxesHelper(this.mesh);
+        this.addAxesHelper(this.pivot.mesh);
       }
     }
   }
@@ -326,7 +407,7 @@ class Part extends ChildPart {
 // a robot consists of a name and a list of parts
 class Robot {
   // construct me with the given name, url to my source (copyright) and array of parts
-  constructor(name, url, camera,parts, debug = false) {
+  constructor(name, url, camera, parts, debug = false) {
     this.name = name;
     this.url = url;
     this.camera = camera;
@@ -347,7 +428,7 @@ class Robot {
     }
     this.getAllParts();
     for (var partIndex in this.allParts) {
-      this.allParts[partIndex].robot=this;
+      this.allParts[partIndex].robot = this;
     }
   }
 
@@ -362,7 +443,7 @@ class Robot {
       parts.push(part);
     }
     // now call the constructor (which will add back pointers to the robot for each part)
-    var robot = new Robot(robotObj.name, robotObj.url,robotObj.camera,parts);
+    var robot = new Robot(robotObj.name, robotObj.url, robotObj.camera, parts);
     return robot;
   }
 
@@ -411,7 +492,7 @@ class Robot {
   }
 
   getAllParts() {
-    this.allParts=this.parts.slice(0); // clone the parts
+    this.allParts = this.parts.slice(0); // clone the parts
     for (var partsIndex in this.parts) {
       var part = this.parts[partsIndex];
       part.getAllParts();
@@ -425,7 +506,7 @@ class Robot {
   setDebug(pDebug = true) {
     this.debug = pDebug;
     for (var partIndex in this.allParts) {
-      this.allParts[partIndex].debug=pDebug;
+      this.allParts[partIndex].debug = pDebug;
     }
   }
 
@@ -434,14 +515,14 @@ class Robot {
     console.log("preparing gui rendering options for " + this.name)
     for (var partsIndex in this.allParts) {
       var part = this.allParts[partsIndex];
-      if (part.joint !== null) {
-        options[part.name+".rx"] = part.rx;
-        options[part.name+".ry"] = part.ry;
-        options[part.name+".rz"] = part.rz;
+      if (part.pivot !== null) {
+        options[part.name + ".rx"] = part.rx;
+        options[part.name + ".ry"] = part.ry;
+        options[part.name + ".rz"] = part.rz;
         // TODO make range configurable
-        gui.add(options, part.name+".rx", -180, 180).listen();
-        gui.add(options, part.name+".ry", -180, 180).listen();
-        gui.add(options, part.name+".rz", -180, 180).listen();
+        gui.add(options, part.name + ".rx", -180, 180).listen();
+        gui.add(options, part.name + ".ry", -180, 180).listen();
+        gui.add(options, part.name + ".rz", -180, 180).listen();
       }
     }
   }
@@ -451,12 +532,12 @@ class Robot {
     // Rotate joints
     for (var partsIndex in this.allParts) {
       var part = this.allParts[partsIndex];
-      if (part.joint !== null) {
-        var mesh = scene.getObjectByName(part.name);
+      if (part.pivot !== null) {
+        var mesh = scene.getObjectByName(part.name + "-pivot");
         if (mesh) {
-          var rx = options[part.name+".rx"];
-          var ry = options[part.name+".ry"];
-          var rz = options[part.name+".rz"];
+          var rx = options[part.name + ".rx"];
+          var ry = options[part.name + ".ry"];
+          var rz = options[part.name + ".rz"];
           // be careful when uncommenting this for debugging - this is triggered on every render request
           // at the fps your computer is capable of
           this.rotateCounter++;
