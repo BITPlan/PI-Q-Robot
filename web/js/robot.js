@@ -13,6 +13,20 @@ class BasePart {
     this.error = null;
   }
 
+  onCreate(mesh) {
+    this.initializeMesh(mesh);
+    if (this.pivot) {
+      var pivotMesh = new THREE.Group();
+      this.pivot.initializeMesh(pivotMesh);
+      pivotMesh.add(this.mesh);
+      //ChildPart.adjustRelativeTo(this.mesh, this.pivot.mesh);
+      // make sure the Pivot is linked correctly into the hierarchy
+      MeshFactory.getInstance().scene.add(pivotMesh);
+    } else {
+      MeshFactory.getInstance().scene.add(mesh);    
+    }
+  }
+
   // initialize the mesh for this part
   initializeMesh(mesh) {
     // add bidirectional references from mesh to part
@@ -26,7 +40,6 @@ class BasePart {
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     mesh.name = this.name;
-    MeshFactory.getInstance().scene.add(mesh);
   }
 }
 
@@ -59,21 +72,6 @@ class Pivot extends BasePart {
     subject.matrix.copy(subject.matrixWorld);
     subject.applyMatrix(new THREE.Matrix4().getInverse(newParent.matrixWorld));
     newParent.add(subject);
-  }
-
-  integrate(part) {
-    var mesh = new THREE.Group();
-    this.initializeMesh(mesh);
-    // make sure the Pivot is linked correctly into the hierarchy
-
-    if (part.mesh.parent) {
-      part.mesh.parent.attach(mesh);
-      //Pivot.reparentObject3D(mesh,part.mesh.parent);
-    }
-    // add the part to the mesh
-    //Pivot.reparentObject3D(part.mesh,mesh);
-    mesh.add(part.mesh);
-    ChildPart.adjustRelativeTo(part.mesh, this.mesh);
   }
 }
 
@@ -171,7 +169,7 @@ class ChildPart extends BasePart {
 
     // callback on creation of loaded mesh
     function onCreate(mesh, msg) {
-      part.initializeMesh(mesh);
+      part.onCreate(mesh);
       if (whenDone) {
         console.log(part.name + ": " + msg + " finished")
         whenDone(part)
@@ -253,10 +251,6 @@ class ChildPart extends BasePart {
       // integrate me directly with robot
       this.robot.integratePart(this);
     }
-    // do we have a pivot?
-    if (this.pivot) {
-      this.pivot.integrate(this);
-    }
   }
 
   // called when all parts have been loaded
@@ -321,8 +315,11 @@ class Part extends ChildPart {
     console.log("adding " + childPart.name + " to " + this.name);
     // https://stackoverflow.com/a/26413121/1497139
     //this.mesh.attach(childPart.mesh);
-    this.mesh.add(childPart.mesh);
-    childPart.adjustRelative(this.mesh);
+    var mesh=this.mesh;
+    if (this.pivot)
+      mesh=this.pivot.mesh;
+    mesh.add(childPart.mesh);
+    childPart.adjustRelative(mesh);
 
     this.partsIntegrated++;
     if (this.partsIntegrated == this.partCount) {

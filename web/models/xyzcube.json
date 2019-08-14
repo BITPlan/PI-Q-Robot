@@ -2,101 +2,229 @@
   "name": "XYZ-Calibration cube",
   "url": "https://www.thingiverse.com/thing:1278865",
   "camera": {
-    "x": -88.2,
-    "y": 100,
-    "z": 122
+    "x": 87,
+    "y": 64,
+    "z": 64
   },
   "parts": [{
-    "name": "Cube1",
-    "x": 0,
-    "y": 12,
-    "z": 0,
-    "rx": 0,
-    "ry": 0,
-    "rz": 0,
-    "stl": "/models/stl/xyz/xyzCalibration_cube.stl",
-    "pivot": {
-      "dx": 0,
-      "dy": -10,
-      "dz": 0,
-      "rx": 90,
-      "ry": 0,
-      "rz": 0,
-      "radius": 2
-    },
-    "parts": [{
-      "name": "Cube1.1",
-      "x": 0,
-      "y": 54,
-      "z": 0,
-      "rx": 0,
-      "ry": 0,
-      "rz": 0,
-      "stl": "/models/stl/xyz/xyzCalibration_cube.stl",
+      "name": "Cube0",
       "pivot": {
-        "dx": 0,
-        "dy": -10,
-        "dz": 0,
-        "rx": 90,
+        "x": -20,
+        "y": 11,
+        "z": -20,
+        "rx": 0,
         "ry": 0,
         "rz": 0,
         "radius": 2
       },
-      "parts": [{
-        "name": "Cube1.1.1",
-        "x": 0,
-        "y": 140,
-        "z": 0,
-        "rx": 270,
-        "ry": 0,
-        "rz": 0,
-        "stl": "/models/stl/xyz/xyzCalibration_cube.stl",
-        "pivot": {
-          "dx": 0,
-          "dy": -10,
-          "dz": 0,
-          "rx": 90,
-          "ry": 0,
-          "rz": 0,
-          "radius": 2
-        }
-      }]
-    }]
-  }, {
-    "name": "Cube2",
-    "x": 40,
-    "y": 12,
-    "z": 0,
-    "rx": 270,
-    "ry": 0,
-    "rz": 0,
-    "stl": "/models/stl/xyz/xyzCalibration_cube.stl",
-    "pivot": {
-      "dx": 0,
-      "dy": 0,
-      "dz": -10,
-      "rx": 0,
-      "ry": 90,
-      "rz": 0,
-      "radius": 2
-    }
-  }, {
-    "name": "Cube3",
-    "x": 80,
-    "y": 12,
-    "z": 0,
-    "rx": 270,
-    "ry": 0,
-    "rz": 0,
-    "stl": "/models/stl/xyz/xyzCalibration_cube.stl",
-    "pivot": {
-      "dx": 0,
-      "dy": -10,
-      "dz": -10,
+      "x": 0,
+      "y": 0,
+      "z": 0,
       "rx": 0,
       "ry": 0,
-      "rz": 90,
-      "radius": 2
+      "rz": 0,
+      "stl": "/models/stl/xyz/xyzCalibration_cube.stl"
+    }, {
+      "name": "CubeA1",
+      "pivot": {
+        "x": 10,
+        "y": 1,
+        "z": 10,
+        "rx": 0,
+        "ry": 0,
+        "rz": 0,
+        "radius": 2
+      },
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "rx": 180,
+      "ry": 180,
+      "rz": 270,
+      "stl": "/models/stl/xyz/xyzCalibration_cube.stl"
+    }, {
+      "name": "CubeB1",
+      "pivot": {
+        "x": 10,
+        "y": 11,
+        "z": 50,
+        "rx": 0,
+        "ry": 0,
+        "rz": 0,
+        "radius": 2
+      },
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "rx": 180,
+      "ry": 180,
+      "rz": 270,
+      "stl": "/models/stl/xyz/xyzCalibration_cube.stl"
+    }, {
+      "name": "CubeC1",
+      "pivot": {
+        "x": 10,
+        "y": 12,
+        "z": 80,
+        "rx": 0,
+        "ry": 0,
+        "rz": 0,
+        "radius": 2
+      },
+      "x": 0,
+      "y": 0,
+      "z": 10,
+      "rx": 180,
+      "ry": 180,
+      "rz": 270,
+      "stl": "/models/stl/xyz/xyzCalibration_cube.stl",
+      "parts": [{
+        "name": "CubeC1.1",
+        "pivot": {
+          "x": 0,
+          "y": 31,
+          "z": 80,
+          "rx": 0,
+          "ry": 0,
+          "rz": 90,
+          "radius": 2
+        },
+        "x": 0,
+        "y": 31,
+        "z": 80,
+        "rx": 180,
+        "ry": 180,
+        "rz": 270,
+        "stl": "/models/stl/xyz/xyzCalibration_cube.stl",
+        "parts": [{
+          "name": "CubeC1.1.1",
+          "pivot": {
+            "x": 0,
+            "y": 60,
+            "z": 80,
+            "rx": 90,
+            "ry": 0,
+            "rz": 0,
+            "radius": 2
+          },
+          "x": 0,
+          "y": 60,
+          "z": 80,
+          "rx": 180,
+          "ry": 180,
+          "rz": 270,
+          "stl": "/models/stl/xyz/xyzCalibration_cube.stl"
+        }]
+      }]
+    }, {
+      "name": "CubeA2",
+      "pivot": {
+        "x": 50,
+        "y": 1,
+        "z": 10,
+        "rx": 0,
+        "ry": 0,
+        "rz": 90,
+        "radius": 2
+      },
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "rx": 180,
+      "ry": 180,
+      "rz": 270,
+      "stl": "/models/stl/xyz/xyzCalibration_cube.stl"
+    }, {
+      "name": "CubeB2",
+      "pivot": {
+        "x": 50,
+        "y": 11,
+        "z": 50,
+        "rx": 0,
+        "ry": 0,
+        "rz": 90,
+        "radius": 2
+      },
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "rx": 180,
+      "ry": 180,
+      "rz": 270,
+      "stl": "/models/stl/xyz/xyzCalibration_cube.stl"
+    }, {
+      "name": "CubeC2",
+      "pivot": {
+        "x": 50,
+        "y": 2,
+        "z": 80,
+        "rx": 0,
+        "ry": 0,
+        "rz": 90,
+        "radius": 2
+      },
+      "x": 10,
+      "y": 0,
+      "z": 10,
+      "rx": 180,
+      "ry": 180,
+      "rz": 270,
+      "stl": "/models/stl/xyz/xyzCalibration_cube.stl"
+    }, {
+      "name": "CubeA3",
+      "pivot": {
+        "x": 90,
+        "y": 2,
+        "z": 10,
+        "rx": 0,
+        "ry": 90,
+        "rz": 90,
+        "radius": 2
+      },
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "rx": 180,
+      "ry": 180,
+      "rz": 270,
+      "stl": "/models/stl/xyz/xyzCalibration_cube.stl"
+    }, {
+      "name": "CubeB3",
+      "pivot": {
+        "x": 90,
+        "y": 11,
+        "z": 50,
+        "rx": 0,
+        "ry": 90,
+        "rz": 90,
+        "radius": 2
+      },
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "rx": 180,
+      "ry": 180,
+      "rz": 270,
+      "stl": "/models/stl/xyz/xyzCalibration_cube.stl"
+    },
+    {
+      "name": "CubeC3",
+      "pivot": {
+        "x": 80,
+        "y": 1,
+        "z": 90,
+        "rx": 0,
+        "ry": 90,
+        "rz": 90,
+        "radius": 2
+      },
+      "x": 10,
+      "y": 0,
+      "z": 10,
+      "rx": 180,
+      "ry": 180,
+      "rz": 270,
+      "stl": "/models/stl/xyz/xyzCalibration_cube.stl"
     }
-  }]
+  ]
 }
