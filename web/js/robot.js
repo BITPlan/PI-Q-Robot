@@ -54,12 +54,24 @@ class Pivot extends BasePart {
     return pivot;
   }
 
+  // https://stackoverflow.com/a/48919815/1497139
+  static reparentObject3D(subject, newParent) {
+    subject.matrix.copy(subject.matrixWorld);
+    subject.applyMatrix(new THREE.Matrix4().getInverse(newParent.matrixWorld));
+    newParent.add(subject);
+  }
+
   integrate(part) {
     var mesh = new THREE.Group();
     this.initializeMesh(mesh);
     // make sure the Pivot is linked correctly into the hierarchy
-    if (part.mesh.parent)
+
+    if (part.mesh.parent) {
       part.mesh.parent.attach(mesh);
+      //Pivot.reparentObject3D(mesh,part.mesh.parent);
+    }
+    // add the part to the mesh
+    //Pivot.reparentObject3D(part.mesh,mesh);
     mesh.add(part.mesh);
     ChildPart.adjustRelativeTo(part.mesh, this.mesh);
   }
@@ -95,14 +107,14 @@ class ChildPart extends BasePart {
       bbox.max.y - bbox.min.y,
       bbox.max.z - bbox.min.z
     );
-    if (this.debug)
+    this.mesh.userData['size']=this.size;
+    if (this.debug) {
       console.log(
-        "bounding box for " +
+        "size for " +
         this.name +
-        "=" +
-        JSON.stringify(bbox.min) +
-        JSON.stringify(bbox.max)
+        "=" +Debug.asString("six", "siy", "siz", this.size)
       );
+    }
   }
 
   /**
@@ -189,6 +201,7 @@ class ChildPart extends BasePart {
   addBoundingBoxWire(toMesh) {
     var boxwire = this.getBoundingBoxWire();
     ChildPart.adjustRelativeTo(boxwire, toMesh);
+    boxwire.name=this.name+"-boxWire";
     toMesh.add(boxwire);
   }
 

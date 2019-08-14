@@ -51,14 +51,43 @@ class MeshFactory {
     return material;
   }
 }
+class Debug {
+  static asString(x, y, z, v, f = 1) {
+    return "(" +
+      Debug.format2(x, (v.x * f)) + " " +
+      Debug.format2(y, (v.y * f)) + " " +
+      Debug.format2(z, (v.z * f)) + ")";
+  }
+
+  static format2(prefix, n) {
+    return Debug.leftJustify(prefix, 3, " ") + ":" + Debug.format(n, 8, 1);
+  }
+
+  static format(n, len, digits) {
+    return Debug.leftJustify(n.toFixed(digits), len, " ");
+  }
+
+  // https://gist.github.com/biesiad/889139
+  static leftJustify(s, length, char) {
+    var fill = [];
+    while (fill.length + s.length < length) {
+      fill[fill.length] = char;
+    }
+    return fill.join('') + s;
+  }
+
+  static rightJustify(s, length, char) {
+    var fill = [];
+    while (fill.length + s.length < length) {
+      fill[fill.length] = char;
+    }
+    return s + fill.join('');
+  }
+}
 
 class SceneDebug {
   constructor(scene) {
     this.scene = scene;
-
-  }
-  asString(x, y, z, v, f = 1) {
-    return "(" + x + ":" + (v.x * f).toFixed(1) + " " + y + ":" + (v.y * f).toFixed(1) + " " + z + ":" + (v.z * f).toFixed(1) + ")";
   }
 
   // show the world and local coordinates
@@ -69,13 +98,19 @@ class SceneDebug {
         wr = new THREE.Quaternion(),
         ws = new THREE.Vector3();
       obj.matrixWorld.decompose(wt, wr, ws);
-      var wts=this.asString("wx","wy","wz",wt)
-      var wrs=this.asString("wrx","wry","wrz",wr,180 / Math.PI)
-      console.log(indent + obj.name +
-        wts+
-        wrs+
-        this.asString("x", "y", "z", obj.position) +
-        this.asString("rx", "ry", "rz", obj.rotation, 180 / Math.PI));
+      var wts = Debug.asString("wx", "wy", "wz", wt)
+      var wrs = Debug.asString("wrx", "wry", "wrz", wr, 180 / Math.PI);
+      var sizes = "";
+      if (obj.userData["size"]) {
+        var size=obj.userData["size"];
+        sizes = Debug.asString("six", "siy", "siz", size);
+      }
+      console.log(Debug.rightJustify(indent + obj.name, 45, " ") +
+        wts +
+        wrs + sizes);
+      console.log(Debug.rightJustify("", 45, " ") +
+        Debug.asString("x", "y", "z", obj.position) +
+        Debug.asString("rx", "ry", "rz", obj.rotation, 180 / Math.PI));
     }
   }
 

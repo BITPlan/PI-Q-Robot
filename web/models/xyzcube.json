@@ -2,16 +2,16 @@
   "name": "XYZ-Calibration cube",
   "url": "https://www.thingiverse.com/thing:1278865",
   "camera": {
-    "x": -124.6,
-    "y": 230,
-    "z": 268
+    "x": -88.2,
+    "y": 100,
+    "z": 122
   },
   "parts": [{
     "name": "Cube1",
     "x": 0,
     "y": 12,
     "z": 0,
-    "rx": 270,
+    "rx": 0,
     "ry": 0,
     "rz": 0,
     "stl": "/models/stl/xyz/xyzCalibration_cube.stl",
@@ -27,9 +27,9 @@
     "parts": [{
       "name": "Cube1.1",
       "x": 0,
-      "y": 24,
+      "y": 54,
       "z": 0,
-      "rx": 270,
+      "rx": 0,
       "ry": 0,
       "rz": 0,
       "stl": "/models/stl/xyz/xyzCalibration_cube.stl",
@@ -45,7 +45,7 @@
       "parts": [{
         "name": "Cube1.1.1",
         "x": 0,
-        "y": 48,
+        "y": 140,
         "z": 0,
         "rx": 270,
         "ry": 0,
