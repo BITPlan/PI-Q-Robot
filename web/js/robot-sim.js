@@ -36,7 +36,7 @@ var options = {
   zoom: 1,
   controls: true,
   rotation: true,
-  rotateBy: 'Q',
+  rotateBy: 'R',
   x: 0,
   y: 0,
   z: 0,

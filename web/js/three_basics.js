@@ -127,7 +127,7 @@ class SceneExporter {
     // Parse the input and generate the glTF output
     exporter.parse(scene, function(gltf) {
       // console.log( gltf );
-      SceneExporter.saveJSON(gltf, scene.name+".glb");
+      SceneExporter.saveJSON(gltf, scene.name + ".glb");
     }, options);
   }
 }
@@ -149,13 +149,17 @@ class SceneDebug {
       var wts = Debug.asString("wx", "wy", "wz", wt)
       var wrs = Debug.asString("wrx", "wry", "wrz", wr, 180 / Math.PI);
       var sizes = "";
+      var parentName = "";
+      if (obj.parent)
+        if (obj.parent.name)
+          parentName = "parent: " + obj.parent.name;
       if (obj.userData["size"]) {
         var size = obj.userData["size"];
         sizes = Debug.asString("six", "siy", "siz", size);
       }
       console.log(Debug.rightJustify(indent + obj.name, 45, " ") +
         wts +
-        wrs + sizes);
+        wrs + sizes + parentName);
       console.log(Debug.rightJustify("", 45, " ") +
         Debug.asString("x", "y", "z", obj.position) +
         Debug.asString("rx", "ry", "rz", obj.rotation, 180 / Math.PI));
@@ -381,7 +385,7 @@ function onDocumentMouseDown(event) {
   // https://stackoverflow.com/a/11562933/1497139
   var target = event.target || event.srcElement;
   var tag = target.tagName;
-  if (tag!='CANVAS')
+  if (tag != 'CANVAS')
     return;
   event.preventDefault();
   mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;

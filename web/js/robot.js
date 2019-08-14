@@ -15,12 +15,14 @@ class BasePart {
 
   onCreate(mesh) {
     this.initializeMesh(mesh);
+    // does this part have a pivot?
     if (this.pivot) {
+      // create the Pivot Object3D
       var pivotMesh = new THREE.Group();
       this.pivot.initializeMesh(pivotMesh);
       pivotMesh.add(this.mesh);
       //ChildPart.adjustRelativeTo(this.mesh, this.pivot.mesh);
-      // make sure the Pivot is linked correctly into the hierarchy
+      // make sure the Pivot is linked correctly into the hierarchy later!
       MeshFactory.getInstance().scene.add(pivotMesh);
     } else {
       MeshFactory.getInstance().scene.add(mesh);
@@ -51,19 +53,7 @@ class Pivot extends BasePart {
 
   static fromJsonObjForPart(part, o) {
     var name = part.name + "-pivot";
-    var x = o.x;
-    var y = o.y;
-    var z = o.z;
-    if (typeof o.dx !== "undefined") {
-      x = part.x + o.dx;
-    }
-    if (typeof o.dy !== "undefined") {
-      y = part.y + o.dy;
-    }
-    if (typeof o.dz !== "undefined") {
-      z = part.z + o.dz;
-    }
-    var pivot = new Pivot(name, x, y, z, o.rx, o.ry, o.rz, o.radius);
+    var pivot = new Pivot(name, o.x, o.y, o.z, o.rx, o.ry, o.rz, o.radius);
     return pivot;
   }
 
@@ -91,6 +81,13 @@ class ChildPart extends BasePart {
     this.parent = null;
     this.showProgress = false;
     this.allParts = null;
+  }
+
+  pivotMesh() {
+    if (this.pivot)
+      return this.pivot.mesh;
+    else
+      return this.mesh;
   }
 
   // calculate the size of this part by creating a bounding box around it
@@ -315,11 +312,10 @@ class Part extends ChildPart {
     console.log("adding " + childPart.name + " to " + this.name);
     // https://stackoverflow.com/a/26413121/1497139
     //this.mesh.attach(childPart.mesh);
-    var mesh=this.mesh;
-    if (this.pivot)
-      mesh=this.pivot.mesh;
-    mesh.add(childPart.mesh);
-    childPart.adjustRelative(mesh);
+    var parentMesh=this.pivotMesh();
+    var childMesh=childPart.pivotMesh();
+    parentMesh.add(childMesh);
+    // ChildPart.adjustRelativeTo(parentMesh,childMesh);
 
     this.partsIntegrated++;
     if (this.partsIntegrated == this.partCount) {
@@ -575,7 +571,7 @@ class Robot {
             // could be just one instance for memory performance
             var quaternion = new THREE.Quaternion();
             quaternion.setFromAxisAngle(yAxis, deg2rad(ry));
-            mesh.position.applyQuaternion(quaternion); 
+            mesh.position.applyQuaternion(quaternion);
           }
           /*
           if (this.debug)
