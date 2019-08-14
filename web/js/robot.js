@@ -11,11 +11,30 @@ class BasePart {
     this.debug = debug;
     this.mesh = null;
     this.error = null;
+    this.quaternion = new THREE.Quaternion();
+    this.rotation = new THREE.Euler();
+    this.rotationDeg = new THREE.Euler();
+  }
+
+  // https://stackoverflow.com/questions/55192521/what-to-do-now-three-getworldrotation-has-gone
+  getWorldRotation() {
+    this.mesh.getWorldQuaternion(this.quaternion);
+    this.rotation.setFromQuaternion(this.quaternion);
+    return this.rotation;
+  }
+
+  getWorldRotationDeg() {
+    var rotation=this.getWorldRotation();
+    var f=180 / Math.PI;
+    this.rotationDeg.x=this.rotation.x*f;
+    this.rotationDeg.y=this.rotation.y*f;
+    this.rotationDeg.z=this.rotation.z*f;
+    return this.rotationDeg;
   }
 
   onCreate(mesh) {
     this.initializeMesh(mesh);
-    // does this part have a pivot?
+    // does this part have a vot?
     if (this.pivot) {
       // create the Pivot Object3D
       var pivotMesh = new THREE.Group();
@@ -102,12 +121,12 @@ class ChildPart extends BasePart {
       bbox.max.y - bbox.min.y,
       bbox.max.z - bbox.min.z
     );
-    this.mesh.userData['size']=this.size;
+    this.mesh.userData['size'] = this.size;
     if (this.debug) {
       console.log(
         "size for " +
         this.name +
-        "=" +Debug.asString("six", "siy", "siz", this.size)
+        "=" + Debug.asString("six", "siy", "siz", this.size)
       );
     }
   }
@@ -188,6 +207,7 @@ class ChildPart extends BasePart {
   }
 
   getBoundingBoxWire() {
+    this.mesh.updateMatrixWorld();
     var boxwire = new THREE.BoxHelper(this.mesh, 0xff8000);
     return boxwire;
   }
@@ -196,7 +216,7 @@ class ChildPart extends BasePart {
   addBoundingBoxWire(toMesh) {
     var boxwire = this.getBoundingBoxWire();
     ChildPart.adjustRelativeTo(boxwire, toMesh);
-    boxwire.name=this.name+"-boxWire";
+    boxwire.name = this.name + "-boxWire";
     toMesh.add(boxwire);
   }
 
@@ -312,10 +332,11 @@ class Part extends ChildPart {
     console.log("adding " + childPart.name + " to " + this.name);
     // https://stackoverflow.com/a/26413121/1497139
     //this.mesh.attach(childPart.mesh);
-    var parentMesh=this.pivotMesh();
-    var childMesh=childPart.pivotMesh();
+    var parentMesh = this.pivotMesh();
+    var childMesh = childPart.pivotMesh();
     parentMesh.add(childMesh);
-    ChildPart.adjustRelativeTo(childMesh,parentMesh);
+    if (this.robot.positioning !== 'relative')
+      ChildPart.adjustRelativeTo(childMesh, parentMesh);
 
     this.partsIntegrated++;
     if (this.partsIntegrated == this.partCount) {
@@ -351,6 +372,10 @@ class Part extends ChildPart {
     this.addArrow(za, this.size.z / 2, 'blue');
   }
 
+  static valueIsNear(value,check1,check2,maxDiff) {
+    return (((value> check1-maxDiff) && (value<check1+maxDiff)) || ((value > check2-maxDiff) && (value < check2+maxDiff)))
+  }
+
   // create a visible pivot Joint
   createPivotJoint() {
     if (this.debug)
@@ -358,8 +383,11 @@ class Part extends ChildPart {
     var radius = this.pivot.radius;
     // height in normal "up" rotation
     var height = this.size.z;
-    // are we rotate in x direction (90 or 270 degrees)
-    if (this.rx == 90 || this.rx == 270) {
+    var r = this.getWorldRotationDeg();
+    // are we rotated in x direction (90 or 270 degrees)
+    if (Part.valueIsNear(r.x,90,270,1)) {
+      height = this.size.y;
+    } else if (Part.valueIsNear(r.x,90,270,1)) {
       height = this.size.x;
     }
     var meshFactory = MeshFactory.getInstance();
@@ -415,11 +443,12 @@ class Part extends ChildPart {
 
 // a robot consists of a name and a list of parts
 class Robot {
-  // construct me with the given name, url to my source (copyright) and array of parts
-  constructor(name, url, camera, parts, debug = false) {
+  // construct me with the given name, url to my source (copyright), camera positioning, positioning mode and array of parts
+  constructor(name, url, camera, positioning = 'absolute', parts, debug = false) {
     this.name = name;
     this.url = url;
     this.camera = camera;
+    this.positioning = positioning;
     this.parts = parts;
     // set to true to debug
     this.debug = debug;
@@ -452,7 +481,7 @@ class Robot {
       parts.push(part);
     }
     // now call the constructor (which will add back pointers to the robot for each part)
-    var robot = new Robot(robotObj.name, robotObj.url, robotObj.camera, parts);
+    var robot = new Robot(robotObj.name, robotObj.url, robotObj.camera, robotObj.positioning, parts);
     return robot;
   }
 
@@ -466,7 +495,7 @@ class Robot {
 
   // load all my parts with the given scene and call the given whenIntegrated callback when done
   loadParts(whenIntegrated) {
-    MeshFactory.getInstance().scene.name=this.name;
+    MeshFactory.getInstance().scene.name = this.name;
     // remember the callback for finalizing the integration - see integratePart
     this.whenIntegrated = whenIntegrated;
     for (var partsIndex in this.parts) {
@@ -556,7 +585,7 @@ class Robot {
             if (this.rotateCounter % 50 == 0)
               logSelected("preRotate", mesh);
           */
-          if (options.rotateBy=='A') {
+          if (options.rotateBy == 'A') {
             mesh.setRotationFromAxisAngle(xAxis, deg2rad(rx));
             mesh.setRotationFromAxisAngle(yAxis, deg2rad(ry));
             mesh.setRotationFromAxisAngle(zAxis, deg2rad(rz));
@@ -564,9 +593,9 @@ class Robot {
             //mesh.rotateOnAxis(xAxis,deg2rad(rx));
             //mesh.rotateOnAxis(yAxis,deg2rad(ry));
             //mesh.rotateOnAxis(zAxis,deg2rad(rz));
-          } else if (options.rotateBy=='R') {
-            mesh.rotation.set(deg2rad(rx),deg2rad(ry),deg2rad(rz));
-          } else if (options.rotateBy=='Q') {
+          } else if (options.rotateBy == 'R') {
+            mesh.rotation.set(deg2rad(rx), deg2rad(ry), deg2rad(rz));
+          } else if (options.rotateBy == 'Q') {
             // https://codepen.io/luics/pen/GEbOYO
             // could be just one instance for memory performance
             var quaternion = new THREE.Quaternion();

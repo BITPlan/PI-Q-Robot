@@ -6,6 +6,7 @@
     "y": 64,
     "z": 64
   },
+  "positioning": "relative",
   "parts": [{
       "name": "Cube0",
       "pivot": {
