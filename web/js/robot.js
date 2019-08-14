@@ -564,10 +564,12 @@ class Robot {
             mesh.setRotationFromAxisAngle(xAxis, deg2rad(rx));
             mesh.setRotationFromAxisAngle(yAxis, deg2rad(ry));
             mesh.setRotationFromAxisAngle(zAxis, deg2rad(rz));
+            // the rotateOnAxis is no good for static position it will create a dynamic effect
+            //mesh.rotateOnAxis(xAxis,deg2rad(rx));
+            //mesh.rotateOnAxis(yAxis,deg2rad(ry));
+            //mesh.rotateOnAxis(zAxis,deg2rad(rz));
           } else {
-            mesh.rotation.x = deg2rad(rx);
-            mesh.rotation.y = deg2rad(ry);
-            mesh.rotation.z = deg2rad(rz);
+            mesh.rotation.set(deg2rad(rx),deg2rad(ry),deg2rad(rz));
           }
           /*
           if (this.debug)
