@@ -315,7 +315,7 @@ class Part extends ChildPart {
     var parentMesh=this.pivotMesh();
     var childMesh=childPart.pivotMesh();
     parentMesh.add(childMesh);
-    // ChildPart.adjustRelativeTo(parentMesh,childMesh);
+    ChildPart.adjustRelativeTo(childMesh,parentMesh);
 
     this.partsIntegrated++;
     if (this.partsIntegrated == this.partCount) {
