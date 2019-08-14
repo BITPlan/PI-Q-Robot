@@ -1,0 +1,19 @@
+#!/bin/bash
+# WF 2019-08-09
+# update the controls from github
+# Drag is not updated automatically since it has modifications
+for jsource in exporters.GLTFExporter controls.TrackballControls controls.OrbitControls
+do
+  jdir=$(echo $jsource|cut -f1 -d.)
+  jname=$(echo $jsource|cut -f2 -d.)
+  if [ ! -d $jdir ]
+  then
+    mkdir $jdir
+  fi
+  jpath=$jdir/$jname.js
+  echo "updating $jpath from github"
+  ls -l $jpath
+  curl -s https://raw.githubusercontent.com/mrdoob/three.js/master/examples/js/$jpath -o $jpath
+  ls -l $jpath
+  git diff $jpath
+done

@@ -23,7 +23,7 @@ class BasePart {
       // make sure the Pivot is linked correctly into the hierarchy
       MeshFactory.getInstance().scene.add(pivotMesh);
     } else {
-      MeshFactory.getInstance().scene.add(mesh);    
+      MeshFactory.getInstance().scene.add(mesh);
     }
   }
 
@@ -470,6 +470,7 @@ class Robot {
 
   // load all my parts with the given scene and call the given whenIntegrated callback when done
   loadParts(whenIntegrated) {
+    MeshFactory.getInstance().scene.name=this.name;
     // remember the callback for finalizing the integration - see integratePart
     this.whenIntegrated = whenIntegrated;
     for (var partsIndex in this.parts) {

@@ -85,6 +85,54 @@ class Debug {
   }
 }
 
+// helper for exporting Scenes
+class SceneExporter {
+  /* function to save JSON to file from browser
+   * adapted from http://bgrins.github.io/devtools-snippets/#console-save
+   * @param {Object} data -- json object to save
+   * @param {String} file -- file name to save to
+   */
+  static saveJSON(data, filename) {
+
+    if (!data) {
+      console.error('No data')
+      return;
+    }
+
+    if (!filename) filename = 'console.json'
+
+    if (typeof data === "object") {
+      data = JSON.stringify(data, undefined, 4)
+    }
+
+    var blob = new Blob([data], {
+        type: 'text/json'
+      }),
+      e = new MouseEvent("click"),
+      a = document.createElement('a')
+
+    a.download = filename
+    a.href = window.URL.createObjectURL(blob)
+    a.dataset.downloadurl = ['text/json', a.download, a.href].join(':')
+    // e.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
+    a.dispatchEvent(e)
+  }
+  static
+  export (scene, fileName) {
+    // https://threejs.org/docs/#examples/en/exporters/GLTFExporter
+    // alert("scene "+scene.uuid+" to be exported");
+    // Instantiate a exporter
+    var exporter = new THREE.GLTFExporter();
+    var options = [];
+    // Parse the input and generate the glTF output
+    exporter.parse(scene, function(gltf) {
+      // console.log( gltf );
+      SceneExporter.saveJSON(gltf, scene.name+".glb");
+    }, options);
+  }
+}
+
+// helper for debugging scenes
 class SceneDebug {
   constructor(scene) {
     this.scene = scene;
@@ -102,7 +150,7 @@ class SceneDebug {
       var wrs = Debug.asString("wrx", "wry", "wrz", wr, 180 / Math.PI);
       var sizes = "";
       if (obj.userData["size"]) {
-        var size=obj.userData["size"];
+        var size = obj.userData["size"];
         sizes = Debug.asString("six", "siy", "siz", size);
       }
       console.log(Debug.rightJustify(indent + obj.name, 45, " ") +
