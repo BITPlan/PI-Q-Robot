@@ -560,7 +560,7 @@ class Robot {
             if (this.rotateCounter % 50 == 0)
               logSelected("preRotate", mesh);
           */
-          if (options.byAxis) {
+          if (options.rotateBy=='A') {
             mesh.setRotationFromAxisAngle(xAxis, deg2rad(rx));
             mesh.setRotationFromAxisAngle(yAxis, deg2rad(ry));
             mesh.setRotationFromAxisAngle(zAxis, deg2rad(rz));
@@ -568,8 +568,14 @@ class Robot {
             //mesh.rotateOnAxis(xAxis,deg2rad(rx));
             //mesh.rotateOnAxis(yAxis,deg2rad(ry));
             //mesh.rotateOnAxis(zAxis,deg2rad(rz));
-          } else {
+          } else if (options.rotateBy=='R') {
             mesh.rotation.set(deg2rad(rx),deg2rad(ry),deg2rad(rz));
+          } else if (options.rotateBy=='Q') {
+            // https://codepen.io/luics/pen/GEbOYO
+            // could be just one instance for memory performance
+            var quaternion = new THREE.Quaternion();
+            quaternion.setFromAxisAngle(yAxis, deg2rad(ry));
+            mesh.position.applyQuaternion(quaternion); 
           }
           /*
           if (this.debug)

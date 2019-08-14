@@ -13,8 +13,6 @@ scene.add(axesHelper);
 
 var camera = createCamera(near, far);
 
-// var controls = new THREE.OrbitControls( camera );
-
 // https://www.w3schools.com/colors/colors_picker.asp
 var light0 = new THREE.HemisphereLight(0x443333, 0x111122);
 scene.add(light0);
@@ -38,7 +36,7 @@ var options = {
   zoom: 1,
   controls: true,
   rotation: true,
-  byAxis: false,
+  rotateBy: 'Q',
   x: 0,
   y: 0,
   z: 0,
@@ -76,7 +74,7 @@ infoFolder.add(options, 'screenheight').listen();
 gui.add(options, 'zoom', 0.1, 10).listen();
 gui.add(options, 'controls').listen();
 gui.add(options, 'rotation').listen();
-gui.add(options, 'byAxis').listen();
+gui.add(options, 'rotateBy',{ Quarternion: 'Q', AxisAngle: 'A', Rotation: 'R' }).listen();
 gui.add(options, 'px', -200, 200).listen();
 gui.add(options, 'py', -200, 200).listen();
 gui.add(options, 'pz', -200, 200).listen();

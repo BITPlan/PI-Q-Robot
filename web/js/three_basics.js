@@ -269,6 +269,7 @@ function createTrackballControls() {
 }
 
 function createOrbitControls() {
+  // see e.g. https://stackoverflow.com/a/53649586/1497139
   controls = new THREE.OrbitControls(camera, renderer.domElement);
   return controls;
 }
@@ -377,6 +378,11 @@ function showSelected(selectedObject) {
 }
 
 function onDocumentMouseDown(event) {
+  // https://stackoverflow.com/a/11562933/1497139
+  var target = event.target || event.srcElement;
+  var tag = target.tagName;
+  if (tag!='CANVAS')
+    return;
   event.preventDefault();
   mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
   mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
