@@ -24,17 +24,17 @@ class BasePart {
   }
 
   getWorldRotationDeg() {
-    var rotation=this.getWorldRotation();
-    var f=180 / Math.PI;
-    this.rotationDeg.x=this.rotation.x*f;
-    this.rotationDeg.y=this.rotation.y*f;
-    this.rotationDeg.z=this.rotation.z*f;
+    var rotation = this.getWorldRotation();
+    var f = 180 / Math.PI;
+    this.rotationDeg.x = this.rotation.x * f;
+    this.rotationDeg.y = this.rotation.y * f;
+    this.rotationDeg.z = this.rotation.z * f;
     return this.rotationDeg;
   }
 
   onCreate(mesh) {
     this.initializeMesh(mesh);
-    // does this part have a vot?
+    // does this part have a pivot?
     if (this.pivot) {
       // create the Pivot Object3D
       var pivotMesh = new THREE.Group();
@@ -111,22 +111,33 @@ class ChildPart extends BasePart {
 
   // calculate the size of this part by creating a bounding box around it
   calcSize() {
-    var bboxwire = this.getBoundingBoxWire();
-    ChildPart.adjustRelativeTo(bboxwire, this.mesh);
+    if (this.debug) {
+      console.log("calculating size for " + this.name);
+    }
     var bbox = new THREE.Box3();
-    bbox.setFromObject(bboxwire);
+    if (this.mesh.geometry)
+      bbox = this.mesh.geometry.boundingBox;
+    else {
+      var bboxwire = this.getBoundingBoxWire();
+      ChildPart.adjustRelativeTo(bboxwire, this.mesh);
+      bbox.setFromObject(bboxwire);
+    }
     this.bbox = bbox;
     this.size = new THREE.Vector3(
       bbox.max.x - bbox.min.x,
       bbox.max.y - bbox.min.y,
       bbox.max.z - bbox.min.z
     );
+    var length = this.size.length();
+    if (length == 0) {
+      console.log("error: length of bounding box vector of " + this.name + " is zero");
+    }
     this.mesh.userData['size'] = this.size;
     if (this.debug) {
       console.log(
         "size for " +
         this.name +
-        "=" + Debug.asString("six", "siy", "siz", this.size)
+        "=" + Debug.asString("six", "siy", "siz", this.size) + " length: " + length
       );
     }
   }
@@ -207,17 +218,18 @@ class ChildPart extends BasePart {
   }
 
   getBoundingBoxWire() {
-    this.mesh.updateMatrixWorld();
     var boxwire = new THREE.BoxHelper(this.mesh, 0xff8000);
     return boxwire;
   }
 
   // add my bounding box wire to the given mesh
   addBoundingBoxWire(toMesh) {
-    var boxwire = this.getBoundingBoxWire();
-    ChildPart.adjustRelativeTo(boxwire, toMesh);
-    boxwire.name = this.name + "-boxWire";
-    toMesh.add(boxwire);
+    if (this.robot.boxwires) {
+      var boxwire = this.getBoundingBoxWire();
+      ChildPart.adjustRelativeTo(boxwire, toMesh);
+      boxwire.name = this.name + "-boxWire";
+      toMesh.add(boxwire);
+    }
   }
 
   // add an AxesHelper with my size to the given mesh
@@ -372,8 +384,8 @@ class Part extends ChildPart {
     this.addArrow(za, this.size.z / 2, 'blue');
   }
 
-  static valueIsNear(value,check1,check2,maxDiff) {
-    return (((value> check1-maxDiff) && (value<check1+maxDiff)) || ((value > check2-maxDiff) && (value < check2+maxDiff)))
+  static valueIsNear(value, check1, check2, maxDiff) {
+    return (((value > check1 - maxDiff) && (value < check1 + maxDiff)) || ((value > check2 - maxDiff) && (value < check2 + maxDiff)))
   }
 
   // create a visible pivot Joint
@@ -385,11 +397,14 @@ class Part extends ChildPart {
     var height = this.size.z;
     var r = this.getWorldRotationDeg();
     // are we rotated in x direction (90 or 270 degrees)
-    if (Part.valueIsNear(r.x,90,270,1)) {
+    if (Part.valueIsNear(r.x, 90, 270, 1)) {
       height = this.size.y;
-    } else if (Part.valueIsNear(r.x,90,270,1)) {
+    } else if (Part.valueIsNear(r.x, 90, 270, 1)) {
       height = this.size.x;
     }
+    // just a workaround @FIXME
+    if (height == 0)
+      height = 5;
     var meshFactory = MeshFactory.getInstance();
     // cylinder
     var pivotJoint = meshFactory.createCylinder(
@@ -444,7 +459,7 @@ class Part extends ChildPart {
 // a robot consists of a name and a list of parts
 class Robot {
   // construct me with the given name, url to my source (copyright), camera positioning, positioning mode and array of parts
-  constructor(name, url, camera, positioning = 'absolute', parts, debug = false) {
+  constructor(name, url, camera, positioning = 'absolute', parts, debug = false, boxwires = true) {
     this.name = name;
     this.url = url;
     this.camera = camera;
@@ -452,6 +467,7 @@ class Robot {
     this.parts = parts;
     // set to true to debug
     this.debug = debug;
+    this.boxwires = boxwires;
     // fields to be used later
     this.whenIntegrated = null;
     this.partsIntegrated = 0;

@@ -1,6 +1,7 @@
 {
   "name": "SpiderQ",
   "url": "https://github.com/BITPlan/PI-Q-Robot/tree/master/web/models/stl",
+  "positioning": "absolute",
   "parts": [{
       "name": "body",
       "x": 0,
@@ -113,15 +114,7 @@
     },
     {
       "name": "coxa0",
-      "pivot": {
-        "x": -50,
-        "y": 74,
-        "z": -41,
-        "rx": 0,
-        "ry": 0,
-        "rz": 0,
-        "radius": 4
-      },
+    
       "x": -50,
       "y": 77,
       "z": -41,

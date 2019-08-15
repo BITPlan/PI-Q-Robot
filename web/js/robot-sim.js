@@ -36,6 +36,8 @@ var options = {
   zoom: 1,
   controls: true,
   rotation: true,
+  debug: false,
+  boxwires: true,
   rotateBy: 'R',
   x: 0,
   y: 0,
@@ -73,6 +75,8 @@ infoFolder.add(options, 'screenwidth').listen();
 infoFolder.add(options, 'screenheight').listen();
 gui.add(options, 'zoom', 0.1, 10).listen();
 gui.add(options, 'controls').listen();
+gui.add(options, 'debug').listen();
+gui.add(options, 'boxwires').listen();
 gui.add(options, 'rotation').listen();
 gui.add(options, 'rotateBy',{ Quarternion: 'Q', AxisAngle: 'A', Rotation: 'R' }).listen();
 gui.add(options, 'px', -200, 200).listen();
@@ -148,8 +152,11 @@ const urlParams = new URLSearchParams(window.location.search);
 urlParams.forEach((value, key) => {
   if (key in options) {
     console.log('setting option ', key, '=', value);
+    // convert booleans
+    if (value==='true') value=true;
+    if (value==='false') value=false;
     options[key] = value;
-  } else if (key = 'robot') {
+  } else if (key == 'robot') {
     // https://stackoverflow.com/a/43175774/1497139
     robotUrl = value;
   }
@@ -166,7 +173,8 @@ if (typeof robotUrl === "undefined") {
     .then((robotObj) => {
       console.log('Checkout this JSON! ', robotObj);
       robot = Robot.fromJsonObj(robotObj);
-      robot.setDebug(true);
+      robot.setDebug(options.debug);
+      robot.boxwires=options.boxwires;
       robot.loadParts(function whenIntegrated() {
         robot.addGUI(gui, options);
         var sd=new SceneDebug(scene);
