@@ -70,7 +70,10 @@ class BasePart {
   }
 }
 
+// rotation joint
+// see e.g. https://en.wikipedia.org/wiki/Pivot_joint
 class Pivot extends BasePart {
+  // construct me with the given parameters
   constructor(name, x, y, z, rx, ry, rz, radius, debug = false) {
     super(name, x, y, z, rx, ry, rz, debug);
     this.radius = radius;
@@ -329,7 +332,7 @@ class Part extends ChildPart {
   // construct a part from the given Json Object allowing a hierachy of parts to be created
   static fromJsonObj(partJsonObj) {
     var part = new Part(partJsonObj.name, partJsonObj.stl, partJsonObj.x, partJsonObj.y, partJsonObj.z, partJsonObj.rx, partJsonObj.ry, partJsonObj.rz);
-    if (typeof partJsonObj.pivot !== "undefined") {
+    if (typeof partJsonObj.pivot !== "undefined" && partJsonObj.pivot) {
       part.pivot = Pivot.fromJsonObjForPart(part, partJsonObj.pivot);
     }
     // are there any subparts?
@@ -496,6 +499,11 @@ class Robot {
     for (var partIndex in this.allParts) {
       this.allParts[partIndex].robot = this;
     }
+  }
+
+  save() {
+    var json=(JSON.stringify(this,["name","camera","url","positioning","pivot","x","y","z","rx","ry","rz","radius","stl","parts"],2));
+    SceneExporter.saveJSON(json,this.name+".json");
   }
 
   debugMesh(prefix,mesh) {

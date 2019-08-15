@@ -33,6 +33,7 @@ scene.add(light);
 // Options (DAT.GUI)
 var options = {
   export: function(){ SceneExporter.export(scene); },
+  save: function() { robot.save(); },
   zoom: 1,
   controls: true,
   rotation: true,
@@ -68,6 +69,7 @@ var options = {
 var robot;
 // DAT.GUI Related Stuff
 var gui = new dat.GUI();
+gui.add(options,'save')
 gui.add(options,'export')
 infoFolder = gui.addFolder('info')
 infoFolder.add(options, 'revision').listen();
