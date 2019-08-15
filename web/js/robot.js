@@ -42,15 +42,15 @@ class BasePart {
       pivotMesh.add(this.mesh);
       //ChildPart.adjustRelativeTo(this.mesh, this.pivot.mesh);
       // make sure the Pivot is linked correctly into the hierarchy later!
-      this.robot.debugMesh("pre SceneAdd",mesh);
-      this.robot.debugMesh("pre SceneAdd",pivotMesh);
+      this.robot.debugMesh("pre SceneAdd", mesh);
+      this.robot.debugMesh("pre SceneAdd", pivotMesh);
       MeshFactory.getInstance().scene.add(pivotMesh);
-      this.robot.debugMesh("post SceneAdd",mesh);
-      this.robot.debugMesh("post SceneAdd",pivotMesh);
+      this.robot.debugMesh("post SceneAdd", mesh);
+      this.robot.debugMesh("post SceneAdd", pivotMesh);
     } else {
-      this.robot.debugMesh("pre SceneAdd",mesh);
+      this.robot.debugMesh("pre SceneAdd", mesh);
       MeshFactory.getInstance().scene.add(mesh);
-      this.robot.debugMesh("post SceneAdd",mesh);
+      this.robot.debugMesh("post SceneAdd", mesh);
     }
   }
 
@@ -59,7 +59,7 @@ class BasePart {
     // add bidirectional references from mesh to part
     this.mesh = mesh;
     // make the part available in the userdata of the mesh
-    mesh.userData['part'] = this;
+    mesh.userData['part'] = this.name;
     mesh.name = this.name;
     // position and rotate mesh as requested
     mesh.position.set(this.x, this.y, this.z);
@@ -274,7 +274,7 @@ class ChildPart extends BasePart {
       console.log('error: parentMesh ' + this.parent + ' not available yet for ' + this.name);
       return;
     }
-    var parentPart = parentMesh.userData['part'];
+    var parentPart = this.robot.getPartByName(parentMesh.userData['part']);
     return parentPart;
   }
 
@@ -397,12 +397,12 @@ class Part extends ChildPart {
     return (((value > check1 - maxDiff) && (value < check1 + maxDiff)) || ((value > check2 - maxDiff) && (value < check2 + maxDiff)))
   }
 
-  static angleIsNear(angle,check1,check2,maxDiff) {
-    var value=angle;
-    value=value%360;
-    if (value<0)
-      value=value+360;
-    return Part.valueIsNear(value,check1,check2,maxDiff);
+  static angleIsNear(angle, check1, check2, maxDiff) {
+    var value = angle;
+    value = value % 360;
+    if (value < 0)
+      value = value + 360;
+    return Part.valueIsNear(value, check1, check2, maxDiff);
   }
 
   // create a visible pivot Joint
@@ -482,7 +482,7 @@ class Robot {
     this.boxwires = boxwires;
     // set to true to debug
     this.debug = debug;
-    this.sceneDebug=new SceneDebug(MeshFactory.getInstance().scene);
+    this.sceneDebug = new SceneDebug(MeshFactory.getInstance().scene);
     // fields to be used later
     this.whenIntegrated = null;
     this.partsIntegrated = 0;
@@ -501,14 +501,43 @@ class Robot {
     }
   }
 
+  // save me in json format
   save() {
-    var json=(JSON.stringify(this,["name","camera","url","positioning","pivot","x","y","z","rx","ry","rz","radius","stl","parts"],2));
-    SceneExporter.saveJSON(json,this.name+".json");
+    var fields = ["","name", "camera", "url", "positioning", "pivot", "x", "y", "z", "rx", "ry", "rz", "radius", "stl", "parts"];
+
+    function replacer(key, value) {
+      if (value === null) {
+        //console.log('ignoring undefined '+key+'('+typeof (key)+')');
+        return undefined;
+      }
+      if (fields.includes(key))
+        return value;
+      // allow normal arrays (parts) to be stringified
+      if (key.match('[0-9]+'))
+        return value;
+      //console.log('ignoring '+key+'('+typeof (key)+')');
+    };
+    var json = (JSON.stringify(this, replacer, 2));
+    SceneExporter.saveJSON(json, this.name + ".json");
   }
 
-  debugMesh(prefix,mesh) {
+  // rerrange
+  rearrange() {
+    console.log("rearranging ...");
+    for (var partIndex in this.allParts) {
+      var part = this.allParts[partIndex];
+      // add pivots to the coxas
+      if (part.name.match('coxa[0-9]')) {
+        console.log("rearranging " + part.name);
+        part.pivot = new Pivot(part.name + "-pivot", part.x, part.y, part.z, part.rx, part.ry, part.rz);
+      }
+    }
+    this.save();
+  }
+
+  debugMesh(prefix, mesh) {
     if (this.debug) {
-      this.sceneDebug.showObject(prefix,mesh);
+      this.sceneDebug.showObject(prefix, mesh);
     }
   }
 
@@ -577,6 +606,12 @@ class Robot {
     }
   }
 
+  // lookup a part by it's name
+  getPartByName(name) {
+    return this.allPartsByName[name];
+  }
+
+  // get AllParts recursively
   getAllParts() {
     this.allParts = this.parts.slice(0); // clone the parts
     for (var partsIndex in this.parts) {
@@ -585,6 +620,11 @@ class Robot {
       for (var subPartsIndex in part.allParts) {
         this.allParts.push(part.allParts[subPartsIndex]);
       }
+    }
+    this.allPartsByName=[];
+    for (var partsIndex in this.allParts) {
+      var part = this.allParts[partsIndex];
+      this.allPartsByName[part.name]=part;
     }
   }
 

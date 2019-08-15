@@ -34,6 +34,7 @@ scene.add(light);
 var options = {
   export: function(){ SceneExporter.export(scene); },
   save: function() { robot.save(); },
+  rearrange: function() { robot.rearrange(); },
   zoom: 1,
   controls: true,
   rotation: true,
@@ -71,6 +72,7 @@ var robot;
 var gui = new dat.GUI();
 gui.add(options,'save')
 gui.add(options,'export')
+gui.add(options,'rearrange')
 infoFolder = gui.addFolder('info')
 infoFolder.add(options, 'revision').listen();
 infoFolder.add(options, 'screenwidth').listen();
