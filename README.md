@@ -10,6 +10,7 @@ Raspberry PI controlled Quadruped Robot with 3D Simulator
 * [Wiki](http://wiki.bitplan.com/index.php/Raspberry_PI_Spiderbot)
 * [Demo](http://pi-q-robot.bitplan.com/)
 * [Example Robot definition](https://raw.githubusercontent.com/BITPlan/PI-Q-Robot/master/web/models/spiderq.json)
+* [Discussion](https://discourse.threejs.org/t/robot-simulation-rotation-issues/9065)
 
 ### Installation
 Prerequisites: python3
