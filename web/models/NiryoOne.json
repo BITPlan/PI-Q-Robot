@@ -2,56 +2,95 @@
   "name": "NiryoOne",
   "url": "https://github.com/NiryoRobotics/niryo_one",
   "camera": {
-    "x": -124.6,
-    "y": 230,
-    "z": 268
+    "x": -170,
+    "y": 313,
+    "z": 366
   },
   "positioning": "relative",
   "parts": [{
     "name": "Base",
-    "x": 0,
+    "x": 120,
     "y": 52,
     "z": 0,
     "rx": 270,
     "ry": 0,
     "rz": 0,
-    "stl": "/models/stl/niryo/1-Base_NiryoOne_V2.0.STL"
-  }, {
-    "name": "Shoulder",
-    "pivot": {
-      "x": 0,
-      "y": 116,
-      "z": 0,
-      "rx": 0,
-      "ry": 0,
-      "rz": 0,
-      "radius": 10
-    },
-    "x": -1,
-    "y": 49,
-    "z": -48,
-    "rx": 270,
-    "ry": 0,
-    "rz": 0,
-    "stl": "/models/stl/niryo/2-Shoulder_NiryoOne_V2.0.STL",
+    "stl": "/models/stl/niryo/1-Base_NiryoOne_V2.0.STL",
     "parts": [{
-      "name": "Arm",
+      "name": "Shoulder",
       "pivot": {
-        "x": 104,
-        "y": 192,
-        "z": 0,
-        "rx": 0,
+        "x": 12,
+        "y": 0,
+        "z": 97,
+        "rx": 90,
         "ry": 0,
         "rz": 0,
         "radius": 10
       },
-      "x": 104,
-      "y": 192,
+      "x": 9,
+      "y": 20,
       "z": 0,
-      "rx": 90,
+      "rx": 270,
       "ry": 0,
-      "rz": 0,
-      "stl": "/models/stl/niryo/3-Arm_NiryoOne_V2.0.STL"
+      "rz": 180,
+      "stl": "/models/stl/niryo/2-Shoulder_NiryoOne_V2.0.STL",
+      "parts": [{
+        "name": "Arm",
+        "pivot": {
+          "x": 9,
+          "y": 40,
+          "z": -3,
+          "rx": 90,
+          "ry": 145,
+          "rz": 0,
+          "radius": 10
+        },
+        "x": 106,
+        "y": -5.5,
+        "z": 0,
+        "rx": 90,
+        "ry": 0,
+        "rz": 0,
+        "stl": "/models/stl/niryo/3-Arm_NiryoOne_V2.0.STL",
+        "parts": [{
+          "name": "Elbow",
+          "pivot": {
+            "x": 192,
+            "y": 3,
+            "z": 5,
+            "rx": 0,
+            "ry": 90,
+            "rz": 0,
+            "radius": 10
+          },
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "rx": 90,
+          "ry": 0,
+          "rz": 0,
+          "stl": "/models/stl/niryo/4-Elbow_NiryoOne_V2.0.STL",
+          "parts": [{
+            "name": "Forearm",
+            "pivot": {
+              "x": 192,
+              "y": 3,
+              "z": 5,
+              "rx": 90,
+              "ry": 0,
+              "rz": 90,
+              "radius": 10
+            },
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "rx": 90,
+            "ry": 0,
+            "rz": 0,
+            "stl": "/models/stl/niryo/5-Forearm_NiryoOne_V2.0.STL"
+          }]
+        }]
+      }]
     }]
   }]
 }
