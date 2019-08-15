@@ -87,7 +87,36 @@
             "rx": 90,
             "ry": 0,
             "rz": 90,
-            "stl": "/models/stl/niryo/5-Forearm_NiryoOne_V2.0.STL"
+            "stl": "/models/stl/niryo/5-Forearm_NiryoOne_V2.0.STL",
+            "parts": [{
+              "name": "Wrist",
+              "pivot": {
+                "x": 1,
+                "y": -74,
+                "z": 0,
+                "rx": 90,
+                "ry": 0,
+                "rz": 0,
+                "radius": 10
+              },
+              "x": 0,
+              "y": 0,
+              "z": 0,
+              "rx": 0,
+              "ry": 0,
+              "rz": 0,
+              "stl": "/models/stl/niryo/6-Wrist_NiryoOne_V2.0.STL",
+              "parts": [{
+                "name": "Hand",
+                "x": 40,
+                "y": 0,
+                "z": 0,
+                "rx": 90,
+                "ry": 90,
+                "rz": 0,
+                "stl": "/models/stl/niryo/7-Hand_NiryoOne_V2.0.STL"
+              }]
+            }]
           }]
         }]
       }]
