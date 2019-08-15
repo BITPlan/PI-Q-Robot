@@ -394,6 +394,14 @@ class Part extends ChildPart {
     return (((value > check1 - maxDiff) && (value < check1 + maxDiff)) || ((value > check2 - maxDiff) && (value < check2 + maxDiff)))
   }
 
+  static angleIsNear(angle,check1,check2,maxDiff) {
+    var value=angle;
+    value=value%360;
+    if (value<0)
+      value=value+360;
+    return Part.valueIsNear(value,check1,check2,maxDiff);
+  }
+
   // create a visible pivot Joint
   createPivotJoint() {
     if (this.debug)
@@ -403,14 +411,11 @@ class Part extends ChildPart {
     var height = this.size.z;
     var r = this.getWorldRotationDeg();
     // are we rotated in x direction (90 or 270 degrees)
-    if (Part.valueIsNear(r.x, 90, 270, 1)) {
-      height = this.size.y;
-    } else if (Part.valueIsNear(r.x, 90, 270, 1)) {
+    if (Part.angleIsNear(r.y, 90, 270, 1)) {
       height = this.size.x;
+    } else if (Part.angleIsNear(r.x, 90, 270, 1)) {
+      height = this.size.y;
     }
-    // just a workaround @FIXME
-    if (height == 0)
-      height = 5;
     var meshFactory = MeshFactory.getInstance();
     // cylinder
     var pivotJoint = meshFactory.createCylinder(
