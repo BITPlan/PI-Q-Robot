@@ -54,13 +54,13 @@ class BasePart {
     this.mesh = mesh;
     // make the part available in the userdata of the mesh
     mesh.userData['part'] = this;
-    // rotate mesh as requested
-    mesh.rotation.set(deg2rad(this.rx), deg2rad(this.ry), deg2rad(this.rz));
+    mesh.name = this.name;
+    // position and rotate mesh as requested
     mesh.position.set(this.x, this.y, this.z);
+    mesh.rotation.set(deg2rad(this.rx), deg2rad(this.ry), deg2rad(this.rz));
     // mesh.scale.set(0.5, 0.5, 0.5);
     mesh.castShadow = true;
     mesh.receiveShadow = true;
-    mesh.name = this.name;
   }
 }
 
@@ -536,7 +536,9 @@ class Robot {
     console.log("integrating " + part.name + ": " + part.partCount + " parts =>" + this.partsIntegrated + "/" + this.partCount);
   }
 
+  // callback when robot is fully loaded
   fullyLoaded() {
+    // MeshFactory.getInstance().scene.updateMatrixWorld();
     for (var partIndex in this.parts) {
       this.parts[partIndex].fullyLoaded();
     }
