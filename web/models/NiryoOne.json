@@ -6,7 +6,7 @@
     "y": 230,
     "z": 268
   },
-  "positioning": "absolute",
+  "positioning": "relative",
   "parts": [{
     "name": "Base",
     "x": 0,

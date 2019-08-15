@@ -42,9 +42,15 @@ class BasePart {
       pivotMesh.add(this.mesh);
       //ChildPart.adjustRelativeTo(this.mesh, this.pivot.mesh);
       // make sure the Pivot is linked correctly into the hierarchy later!
+      this.robot.debugMesh("pre SceneAdd",mesh);
+      this.robot.debugMesh("pre SceneAdd",pivotMesh);
       MeshFactory.getInstance().scene.add(pivotMesh);
+      this.robot.debugMesh("post SceneAdd",mesh);
+      this.robot.debugMesh("post SceneAdd",pivotMesh);
     } else {
+      this.robot.debugMesh("pre SceneAdd",mesh);
       MeshFactory.getInstance().scene.add(mesh);
+      this.robot.debugMesh("post SceneAdd",mesh);
     }
   }
 
@@ -465,9 +471,10 @@ class Robot {
     this.camera = camera;
     this.positioning = positioning;
     this.parts = parts;
+    this.boxwires = boxwires;
     // set to true to debug
     this.debug = debug;
-    this.boxwires = boxwires;
+    this.sceneDebug=new SceneDebug(MeshFactory.getInstance().scene);
     // fields to be used later
     this.whenIntegrated = null;
     this.partsIntegrated = 0;
@@ -483,6 +490,12 @@ class Robot {
     this.getAllParts();
     for (var partIndex in this.allParts) {
       this.allParts[partIndex].robot = this;
+    }
+  }
+
+  debugMesh(prefix,mesh) {
+    if (this.debug) {
+      this.sceneDebug.showObject(prefix,mesh);
     }
   }
 
@@ -538,6 +551,9 @@ class Robot {
 
   // callback when robot is fully loaded
   fullyLoaded() {
+    // make sure we render first
+    console.log("first render called")
+    render();
     // MeshFactory.getInstance().scene.updateMatrixWorld();
     for (var partIndex in this.parts) {
       this.parts[partIndex].fullyLoaded();
