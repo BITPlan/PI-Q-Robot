@@ -174,6 +174,90 @@
           "rz": 45,
           "stl": "/models/stl/hinge.stl",
           "parts": []
+        },
+        {
+          "name": "femur0",
+          "x": -80,
+          "y": 69,
+          "z": -69,
+          "rx": 90,
+          "ry": 180,
+          "rz": 225,
+          "pivot": {
+            "name": "femur0-pivot",
+            "x": -80,
+            "y": 69,
+            "z": -69,
+            "rx": 90,
+            "ry": 180,
+            "rz": 225
+          },
+          "parts": [
+            {
+              "name": "femurpart0",
+              "x": -80,
+              "y": 69,
+              "z": -69,
+              "rx": 90,
+              "ry": 180,
+              "rz": 225,
+              "stl": "/models/stl/femur.stl",
+              "parts": []
+            },
+            {
+              "name": "tibia0",
+              "x": -90,
+              "y": 68.5,
+              "z": -80,
+              "rx": 0,
+              "ry": 90,
+              "rz": 0,
+              "pivot": {
+                "name": "tibia0-pivot",
+                "x": -90,
+                "y": 68.5,
+                "z": -80,
+                "rx": 0,
+                "ry": 90,
+                "rz": 0
+              },
+              "parts": [
+                {
+                  "name": "tibiapart0",
+                  "x": -117,
+                  "y": 68.5,
+                  "z": -100,
+                  "rx": 180,
+                  "ry": 135,
+                  "rz": 180,
+                  "stl": "/models/stl/tibia-b.stl",
+                  "parts": []
+                },
+                {
+                  "name": "mg90s20",
+                  "x": -94,
+                  "y": 69,
+                  "z": -89,
+                  "rx": 180,
+                  "ry": 45,
+                  "rz": 0,
+                  "stl": "/models/stl/MG90S.stl",
+                  "parts": []
+                },
+                {
+                  "name": "hinges20",
+                  "x": -105,
+                  "y": 69.5,
+                  "z": -71,
+                  "rx": 0,
+                  "ry": 45,
+                  "rz": 0,
+                  "stl": "/models/stl/hinge.stl",
+                  "parts": []
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -227,6 +311,90 @@
           "rz": 45,
           "stl": "/models/stl/hinge.stl",
           "parts": []
+        },
+        {
+          "name": "femur1",
+          "x": 82,
+          "y": 69,
+          "z": -70,
+          "rx": 90,
+          "ry": 180,
+          "rz": 315,
+          "pivot": {
+            "name": "femur1-pivot",
+            "x": 82,
+            "y": 69,
+            "z": -70,
+            "rx": 90,
+            "ry": 180,
+            "rz": 315
+          },
+          "parts": [
+            {
+              "name": "femurpart1",
+              "x": 82,
+              "y": 69,
+              "z": -70,
+              "rx": 90,
+              "ry": 180,
+              "rz": 315,
+              "stl": "/models/stl/femur.stl",
+              "parts": []
+            },
+            {
+              "name": "tibia1",
+              "x": 110,
+              "y": 68.5,
+              "z": -106,
+              "rx": 0,
+              "ry": 90,
+              "rz": 0,
+              "pivot": {
+                "name": "tibia1-pivot",
+                "x": 110,
+                "y": 68.5,
+                "z": -106,
+                "rx": 0,
+                "ry": 90,
+                "rz": 0
+              },
+              "parts": [
+                {
+                  "name": "tibiapart1",
+                  "x": 110,
+                  "y": 68.5,
+                  "z": -106,
+                  "rx": 180,
+                  "ry": 225,
+                  "rz": 180,
+                  "stl": "/models/stl/tibia-b.stl",
+                  "parts": []
+                },
+                {
+                  "name": "mg90s21",
+                  "x": 102,
+                  "y": 69,
+                  "z": -81,
+                  "rx": 180,
+                  "ry": 135,
+                  "rz": 0,
+                  "stl": "/models/stl/MG90S.stl",
+                  "parts": []
+                },
+                {
+                  "name": "hinges21",
+                  "x": 80,
+                  "y": 69,
+                  "z": -94,
+                  "rx": 0,
+                  "ry": 315,
+                  "rz": 0,
+                  "stl": "/models/stl/hinge.stl",
+                  "parts": []
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -280,6 +448,90 @@
           "rz": 135,
           "stl": "/models/stl/hinge.stl",
           "parts": []
+        },
+        {
+          "name": "femur2",
+          "x": -82,
+          "y": 69,
+          "z": 70,
+          "rx": 0,
+          "ry": 0,
+          "rz": 0,
+          "pivot": {
+            "name": "femur2-pivot",
+            "x": -82,
+            "y": 69,
+            "z": 70,
+            "rx": 0,
+            "ry": 0,
+            "rz": 0
+          },
+          "parts": [
+            {
+              "name": "femurpart2",
+              "x": -82,
+              "y": 69,
+              "z": 70,
+              "rx": 90,
+              "ry": 180,
+              "rz": 315,
+              "stl": "/models/stl/femur.stl",
+              "parts": []
+            },
+            {
+              "name": "tibia2",
+              "x": -122,
+              "y": 68.5,
+              "z": 100,
+              "rx": 0,
+              "ry": 0,
+              "rz": 0,
+              "pivot": {
+                "name": "tibia2-pivot",
+                "x": -122,
+                "y": 68.5,
+                "z": 100,
+                "rx": 0,
+                "ry": 0,
+                "rz": 0
+              },
+              "parts": [
+                {
+                  "name": "tibiapart2",
+                  "x": -122,
+                  "y": 68.5,
+                  "z": 100,
+                  "rx": 180,
+                  "ry": 45,
+                  "rz": 180,
+                  "stl": "/models/stl/tibia-b.stl",
+                  "parts": []
+                },
+                {
+                  "name": "mg90s22",
+                  "x": -95,
+                  "y": 69,
+                  "z": 90,
+                  "rx": 180,
+                  "ry": 135,
+                  "rz": 180,
+                  "stl": "/models/stl/MG90S.stl",
+                  "parts": []
+                },
+                {
+                  "name": "hinges22",
+                  "x": -107,
+                  "y": 69,
+                  "z": 65,
+                  "rx": 90,
+                  "ry": 180,
+                  "rz": 135,
+                  "stl": "/models/stl/hinge.stl",
+                  "parts": []
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -333,342 +585,90 @@
           "rz": 135,
           "stl": "/models/stl/hinge.stl",
           "parts": []
-        }
-      ]
-    },
-    {
-      "name": "femur0",
-      "x": -80,
-      "y": 69,
-      "z": -69,
-      "rx": 90,
-      "ry": 180,
-      "rz": 225,
-      "pivot": {
-        "name": "femur0-pivot",
-        "x": -80,
-        "y": 69,
-        "z": -69,
-        "rx": 90,
-        "ry": 180,
-        "rz": 225
-      },
-      "parts": [
+        },
         {
-          "name": "femurpart0",
-          "x": -80,
-          "y": 69,
-          "z": -69,
-          "rx": 90,
-          "ry": 180,
-          "rz": 225,
-          "stl": "/models/stl/femur.stl",
-          "parts": []
-        }
-      ]
-    },
-    {
-      "name": "femur1",
-      "x": 82,
-      "y": 69,
-      "z": -70,
-      "rx": 90,
-      "ry": 180,
-      "rz": 315,
-      "pivot": {
-        "name": "femur1-pivot",
-        "x": 82,
-        "y": 69,
-        "z": -70,
-        "rx": 90,
-        "ry": 180,
-        "rz": 315
-      },
-      "parts": [
-        {
-          "name": "femurpart1",
-          "x": 82,
-          "y": 69,
-          "z": -70,
-          "rx": 90,
-          "ry": 180,
-          "rz": 315,
-          "stl": "/models/stl/femur.stl",
-          "parts": []
-        }
-      ]
-    },
-    {
-      "name": "femur2",
-      "x": -82,
-      "y": 69,
-      "z": 70,
-      "rx": 0,
-      "ry": 0,
-      "rz": 0,
-      "pivot": {
-        "name": "femur2-pivot",
-        "x": -82,
-        "y": 69,
-        "z": 70,
-        "rx": 0,
-        "ry": 0,
-        "rz": 0
-      },
-      "parts": [
-        {
-          "name": "femurpart2",
-          "x": -82,
-          "y": 69,
-          "z": 70,
-          "rx": 90,
-          "ry": 180,
-          "rz": 315,
-          "stl": "/models/stl/femur.stl",
-          "parts": []
-        }
-      ]
-    },
-    {
-      "name": "femur3",
-      "x": 82,
-      "y": 69,
-      "z": 70,
-      "rx": 0,
-      "ry": 0,
-      "rz": 0,
-      "pivot": {
-        "name": "femur3-pivot",
-        "x": 82,
-        "y": 69,
-        "z": 70,
-        "rx": 0,
-        "ry": 0,
-        "rz": 0
-      },
-      "parts": [
-        {
-          "name": "femurpart3",
+          "name": "femur3",
           "x": 82,
           "y": 69,
           "z": 70,
-          "rx": 90,
-          "ry": 180,
-          "rz": 45,
-          "stl": "/models/stl/femur.stl",
-          "parts": []
-        }
-      ]
-    },
-    {
-      "name": "tibia0",
-      "x": -90,
-      "y": 68.5,
-      "z": -80,
-      "rx": 0,
-      "ry": 90,
-      "rz": 0,
-      "pivot": {
-        "name": "tibia0-pivot",
-        "x": -90,
-        "y": 68.5,
-        "z": -80,
-        "rx": 0,
-        "ry": 90,
-        "rz": 0
-      },
-      "parts": [
-        {
-          "name": "tibiapart0",
-          "x": -117,
-          "y": 68.5,
-          "z": -100,
-          "rx": 180,
-          "ry": 135,
-          "rz": 180,
-          "stl": "/models/stl/tibia-b.stl",
-          "parts": []
-        },
-        {
-          "name": "mg90s20",
-          "x": -94,
-          "y": 69,
-          "z": -89,
-          "rx": 180,
-          "ry": 45,
-          "rz": 0,
-          "stl": "/models/stl/MG90S.stl",
-          "parts": []
-        },
-        {
-          "name": "hinges20",
-          "x": -105,
-          "y": 69.5,
-          "z": -71,
           "rx": 0,
-          "ry": 45,
-          "rz": 0,
-          "stl": "/models/stl/hinge.stl",
-          "parts": []
-        }
-      ]
-    },
-    {
-      "name": "tibia1",
-      "x": 110,
-      "y": 68.5,
-      "z": -106,
-      "rx": 0,
-      "ry": 90,
-      "rz": 0,
-      "pivot": {
-        "name": "tibia1-pivot",
-        "x": 110,
-        "y": 68.5,
-        "z": -106,
-        "rx": 0,
-        "ry": 90,
-        "rz": 0
-      },
-      "parts": [
-        {
-          "name": "tibiapart1",
-          "x": 110,
-          "y": 68.5,
-          "z": -106,
-          "rx": 180,
-          "ry": 225,
-          "rz": 180,
-          "stl": "/models/stl/tibia-b.stl",
-          "parts": []
-        },
-        {
-          "name": "mg90s21",
-          "x": 102,
-          "y": 69,
-          "z": -81,
-          "rx": 180,
-          "ry": 135,
-          "rz": 0,
-          "stl": "/models/stl/MG90S.stl",
-          "parts": []
-        },
-        {
-          "name": "hinges21",
-          "x": 80,
-          "y": 69,
-          "z": -94,
-          "rx": 0,
-          "ry": 315,
-          "rz": 0,
-          "stl": "/models/stl/hinge.stl",
-          "parts": []
-        }
-      ]
-    },
-    {
-      "name": "tibia2",
-      "x": -122,
-      "y": 68.5,
-      "z": 100,
-      "rx": 0,
-      "ry": 0,
-      "rz": 0,
-      "pivot": {
-        "name": "tibia2-pivot",
-        "x": -122,
-        "y": 68.5,
-        "z": 100,
-        "rx": 0,
-        "ry": 0,
-        "rz": 0
-      },
-      "parts": [
-        {
-          "name": "tibiapart2",
-          "x": -122,
-          "y": 68.5,
-          "z": 100,
-          "rx": 180,
-          "ry": 45,
-          "rz": 180,
-          "stl": "/models/stl/tibia-b.stl",
-          "parts": []
-        },
-        {
-          "name": "mg90s22",
-          "x": -95,
-          "y": 69,
-          "z": 90,
-          "rx": 180,
-          "ry": 135,
-          "rz": 180,
-          "stl": "/models/stl/MG90S.stl",
-          "parts": []
-        },
-        {
-          "name": "hinges22",
-          "x": -107,
-          "y": 69,
-          "z": 65,
-          "rx": 90,
-          "ry": 180,
-          "rz": 135,
-          "stl": "/models/stl/hinge.stl",
-          "parts": []
-        }
-      ]
-    },
-    {
-      "name": "tibia3",
-      "x": 122,
-      "y": 68.5,
-      "z": 100,
-      "rx": 0,
-      "ry": 0,
-      "rz": 0,
-      "pivot": {
-        "name": "tibia3-pivot",
-        "x": 122,
-        "y": 68.5,
-        "z": 100,
-        "rx": 0,
-        "ry": 0,
-        "rz": 0
-      },
-      "parts": [
-        {
-          "name": "tibiapart3",
-          "x": 122,
-          "y": 68.5,
-          "z": 100,
-          "rx": 180,
-          "ry": 315,
-          "rz": 180,
-          "stl": "/models/stl/tibia-f.stl",
-          "parts": []
-        },
-        {
-          "name": "mg90s23",
-          "x": 95,
-          "y": 69,
-          "z": 87,
-          "rx": 180,
-          "ry": 225,
-          "rz": 0,
-          "stl": "/models/stl/MG90S.stl",
-          "parts": []
-        },
-        {
-          "name": "hinges23",
-          "x": 107,
-          "y": 69,
-          "z": 65,
-          "rx": 90,
           "ry": 0,
-          "rz": 135,
-          "stl": "/models/stl/hinge.stl",
-          "parts": []
+          "rz": 0,
+          "pivot": {
+            "name": "femur3-pivot",
+            "x": 82,
+            "y": 69,
+            "z": 70,
+            "rx": 0,
+            "ry": 0,
+            "rz": 0
+          },
+          "parts": [
+            {
+              "name": "femurpart3",
+              "x": 82,
+              "y": 69,
+              "z": 70,
+              "rx": 90,
+              "ry": 180,
+              "rz": 45,
+              "stl": "/models/stl/femur.stl",
+              "parts": []
+            },
+            {
+              "name": "tibia3",
+              "x": 122,
+              "y": 68.5,
+              "z": 100,
+              "rx": 0,
+              "ry": 0,
+              "rz": 0,
+              "pivot": {
+                "name": "tibia3-pivot",
+                "x": 122,
+                "y": 68.5,
+                "z": 100,
+                "rx": 0,
+                "ry": 0,
+                "rz": 0
+              },
+              "parts": [
+                {
+                  "name": "tibiapart3",
+                  "x": 122,
+                  "y": 68.5,
+                  "z": 100,
+                  "rx": 180,
+                  "ry": 315,
+                  "rz": 180,
+                  "stl": "/models/stl/tibia-f.stl",
+                  "parts": []
+                },
+                {
+                  "name": "mg90s23",
+                  "x": 95,
+                  "y": 69,
+                  "z": 87,
+                  "rx": 180,
+                  "ry": 225,
+                  "rz": 0,
+                  "stl": "/models/stl/MG90S.stl",
+                  "parts": []
+                },
+                {
+                  "name": "hinges23",
+                  "x": 107,
+                  "y": 69,
+                  "z": 65,
+                  "rx": 90,
+                  "ry": 0,
+                  "rz": 135,
+                  "stl": "/models/stl/hinge.stl",
+                  "parts": []
+                }
+              ]
+            }
+          ]
         }
       ]
     }

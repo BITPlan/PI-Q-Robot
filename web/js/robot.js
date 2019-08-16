@@ -348,6 +348,31 @@ class Part extends ChildPart {
     return part;
   }
 
+  // remove an array element by the given key
+  // see https://stackoverflow.com/a/10024943/1497139
+  static removeArrayElementByName(someArray, key) {
+    for (var i = 0; i < someArray.length; i++)
+      if (someArray[i].name === key) {
+        someArray.splice(i, 1);
+        break;
+      }
+  }
+
+  // reparent a part
+  reparent(newParentName) {
+    var newParentPart=this.robot.getPartByName(newParentName);
+    var parentName=this.robot.name;
+    var parentPartArray=this.robot.parts;
+    if (this.parent) {
+      var parentPart=this.getParentPart();
+      parentName=this.parent;
+      parentPartArray=parentPart.parts;
+    }
+    console.log("reparenting " + this.name + " from " + parentName + " to " + newParentName);
+    Part.removeArrayElementByName(parentPartArray,this.name);
+    newParentPart.parts.push(this);
+  }
+
   // integrate the given childPart after it has been loaded
   integrateChild(childPart) {
     console.log("adding " + childPart.name + " to " + this.name);
@@ -503,7 +528,7 @@ class Robot {
 
   // save me in json format
   save() {
-    var fields = ["","name", "camera", "url", "positioning", "pivot", "x", "y", "z", "rx", "ry", "rz", "radius", "stl", "parts"];
+    var fields = ["", "name", "camera", "url", "positioning", "pivot", "x", "y", "z", "rx", "ry", "rz", "radius", "stl", "parts"];
 
     function replacer(key, value) {
       if (value === null) {
@@ -530,6 +555,17 @@ class Robot {
       if (part.name.match('(coxa|femur|tibia)[0-9]')) {
         console.log("rearranging " + part.name);
         part.pivot = new Pivot(part.name + "-pivot", part.x, part.y, part.z, part.rx, part.ry, part.rz);
+      }
+      // reparent tibias and femurs
+      var limbMatches=part.name.match('(tibia|femur)([0-9])');
+      if (limbMatches) {
+        var limbName=limbMatches[1];
+        var limbIndex=limbMatches[2];
+        var newParent='femur';
+        if (limbName==='femur')
+          newParent='coxa';
+        // make this limb a child of the newParent
+        part.reparent(newParent+limbIndex);
       }
     }
     this.save();
@@ -621,10 +657,10 @@ class Robot {
         this.allParts.push(part.allParts[subPartsIndex]);
       }
     }
-    this.allPartsByName=[];
+    this.allPartsByName = [];
     for (var partsIndex in this.allParts) {
       var part = this.allParts[partsIndex];
-      this.allPartsByName[part.name]=part;
+      this.allPartsByName[part.name] = part;
     }
   }
 
