@@ -1,0 +1,18 @@
+#!/bin/bash
+# WF 2019-09-16
+# get new rearranged version of spiderq.json
+
+# get the most recently modified file
+# https://stackoverflow.com/a/9052878/1497139
+latest() {
+  local l_d="$1"
+  local l_pattern="$2"
+  cd "$l_d"
+  ls -t $l_pattern | head -1
+}
+d=$HOME/Downloads
+newspider=$(latest $d "SpiderQ*.json")
+src="$d/$newspider"
+target="web/models/spider2.json"
+echo "moving $src to $target"
+mv $src $target

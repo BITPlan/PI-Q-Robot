@@ -527,7 +527,7 @@ class Robot {
     for (var partIndex in this.allParts) {
       var part = this.allParts[partIndex];
       // add pivots to the coxas
-      if (part.name.match('coxa[0-9]')) {
+      if (part.name.match('(coxa|femur|tibia)[0-9]')) {
         console.log("rearranging " + part.name);
         part.pivot = new Pivot(part.name + "-pivot", part.x, part.y, part.z, part.rx, part.ry, part.rz);
       }

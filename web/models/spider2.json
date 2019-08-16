@@ -344,6 +344,15 @@
       "rx": 90,
       "ry": 180,
       "rz": 225,
+      "pivot": {
+        "name": "femur0-pivot",
+        "x": -80,
+        "y": 69,
+        "z": -69,
+        "rx": 90,
+        "ry": 180,
+        "rz": 225
+      },
       "parts": [
         {
           "name": "femurpart0",
@@ -366,6 +375,15 @@
       "rx": 90,
       "ry": 180,
       "rz": 315,
+      "pivot": {
+        "name": "femur1-pivot",
+        "x": 82,
+        "y": 69,
+        "z": -70,
+        "rx": 90,
+        "ry": 180,
+        "rz": 315
+      },
       "parts": [
         {
           "name": "femurpart1",
@@ -388,6 +406,15 @@
       "rx": 0,
       "ry": 0,
       "rz": 0,
+      "pivot": {
+        "name": "femur2-pivot",
+        "x": -82,
+        "y": 69,
+        "z": 70,
+        "rx": 0,
+        "ry": 0,
+        "rz": 0
+      },
       "parts": [
         {
           "name": "femurpart2",
@@ -410,6 +437,15 @@
       "rx": 0,
       "ry": 0,
       "rz": 0,
+      "pivot": {
+        "name": "femur3-pivot",
+        "x": 82,
+        "y": 69,
+        "z": 70,
+        "rx": 0,
+        "ry": 0,
+        "rz": 0
+      },
       "parts": [
         {
           "name": "femurpart3",
@@ -432,6 +468,15 @@
       "rx": 0,
       "ry": 90,
       "rz": 0,
+      "pivot": {
+        "name": "tibia0-pivot",
+        "x": -90,
+        "y": 68.5,
+        "z": -80,
+        "rx": 0,
+        "ry": 90,
+        "rz": 0
+      },
       "parts": [
         {
           "name": "tibiapart0",
@@ -476,6 +521,15 @@
       "rx": 0,
       "ry": 90,
       "rz": 0,
+      "pivot": {
+        "name": "tibia1-pivot",
+        "x": 110,
+        "y": 68.5,
+        "z": -106,
+        "rx": 0,
+        "ry": 90,
+        "rz": 0
+      },
       "parts": [
         {
           "name": "tibiapart1",
@@ -520,6 +574,15 @@
       "rx": 0,
       "ry": 0,
       "rz": 0,
+      "pivot": {
+        "name": "tibia2-pivot",
+        "x": -122,
+        "y": 68.5,
+        "z": 100,
+        "rx": 0,
+        "ry": 0,
+        "rz": 0
+      },
       "parts": [
         {
           "name": "tibiapart2",
@@ -564,6 +627,15 @@
       "rx": 0,
       "ry": 0,
       "rz": 0,
+      "pivot": {
+        "name": "tibia3-pivot",
+        "x": 122,
+        "y": 68.5,
+        "z": 100,
+        "rx": 0,
+        "ry": 0,
+        "rz": 0
+      },
       "parts": [
         {
           "name": "tibiapart3",
