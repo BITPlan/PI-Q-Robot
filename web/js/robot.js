@@ -42,15 +42,15 @@ class BasePart {
       pivotMesh.add(this.mesh);
       //ChildPart.adjustRelativeTo(this.mesh, this.pivot.mesh);
       // make sure the Pivot is linked correctly into the hierarchy later!
-      this.robot.debugMesh("pre SceneAdd", mesh);
-      this.robot.debugMesh("pre SceneAdd", pivotMesh);
+      //this.robot.debugMesh("pre SceneAdd", mesh);
+      //this.robot.debugMesh("pre SceneAdd", pivotMesh);
       MeshFactory.getInstance().scene.add(pivotMesh);
-      this.robot.debugMesh("post SceneAdd", mesh);
-      this.robot.debugMesh("post SceneAdd", pivotMesh);
+      //this.robot.debugMesh("post SceneAdd", mesh);
+      //this.robot.debugMesh("post SceneAdd", pivotMesh);
     } else {
-      this.robot.debugMesh("pre SceneAdd", mesh);
+      //this.robot.debugMesh("pre SceneAdd", mesh);
       MeshFactory.getInstance().scene.add(mesh);
-      this.robot.debugMesh("post SceneAdd", mesh);
+      //this.robot.debugMesh("post SceneAdd", mesh);
     }
   }
 
@@ -74,14 +74,16 @@ class BasePart {
 // see e.g. https://en.wikipedia.org/wiki/Pivot_joint
 class Pivot extends BasePart {
   // construct me with the given parameters
-  constructor(name, x, y, z, rx, ry, rz, radius, debug = false) {
-    super(name, x, y, z, rx, ry, rz, debug);
+  constructor(part, x, y, z, rx, ry, rz, radius, debug = false) {
+    super(part.name+"-pivot", x, y, z, rx, ry, rz, debug);
+    this.part=part;
     this.radius = radius;
+    // fields to be set later
   }
 
+  // construct me from the given JSON Object o for the given part p
   static fromJsonObjForPart(part, o) {
-    var name = part.name + "-pivot";
-    var pivot = new Pivot(name, o.x, o.y, o.z, o.rx, o.ry, o.rz, o.radius);
+    var pivot = new Pivot(part, o.x, o.y, o.z, o.rx, o.ry, o.rz, o.radius);
     return pivot;
   }
 
@@ -90,6 +92,43 @@ class Pivot extends BasePart {
     subject.matrix.copy(subject.matrixWorld);
     subject.applyMatrix(new THREE.Matrix4().getInverse(newParent.matrixWorld));
     newParent.add(subject);
+  }
+
+  // create a visible pivot Joint
+  createPivotJoint() {
+    if (this.debug)
+      this.part.addSizeArrows();
+    var radius = this.radius;
+    var part=this.part;
+    // height in normal "up" rotation
+    var height = part.size.z;
+    var r = part.getWorldRotationDeg();
+    // are we rotated in x direction (90 or 270 degrees)
+    if (Part.angleIsNear(r.y, 90, 270, 1)) {
+      height = part.size.x;
+    } else if (Part.angleIsNear(r.x, 90, 270, 1)) {
+      height = part.size.y;
+    }
+    var meshFactory = MeshFactory.getInstance();
+    // cylinder
+    var pivotJoint = meshFactory.createCylinder(
+      radius,
+      height,
+      true
+    );
+    // TODO use sphere when pivot can be rotated around all axes
+    // pivot=MeshFactory.getInstance().createSphere(pivotr,true);
+    pivotJoint.material.color.set(meshFactory.pivotColor);
+    return pivotJoint;
+  }
+
+  // create a joint for this pivot and the given part
+  createJoint() {
+    var pivotJoint = this.createPivotJoint();
+    pivotJoint.name = this.name + ".Joint";
+    // for debugging
+    objects.push(pivotJoint);
+    this.mesh.add(pivotJoint);
   }
 }
 
@@ -360,16 +399,16 @@ class Part extends ChildPart {
 
   // reparent a part
   reparent(newParentName) {
-    var newParentPart=this.robot.getPartByName(newParentName);
-    var parentName=this.robot.name;
-    var parentPartArray=this.robot.parts;
+    var newParentPart = this.robot.getPartByName(newParentName);
+    var parentName = this.robot.name;
+    var parentPartArray = this.robot.parts;
     if (this.parent) {
-      var parentPart=this.getParentPart();
-      parentName=this.parent;
-      parentPartArray=parentPart.parts;
+      var parentPart = this.getParentPart();
+      parentName = this.parent;
+      parentPartArray = parentPart.parts;
     }
     console.log("reparenting " + this.name + " from " + parentName + " to " + newParentName);
-    Part.removeArrayElementByName(parentPartArray,this.name);
+    Part.removeArrayElementByName(parentPartArray, this.name);
     newParentPart.parts.push(this);
   }
 
@@ -430,33 +469,6 @@ class Part extends ChildPart {
     return Part.valueIsNear(value, check1, check2, maxDiff);
   }
 
-  // create a visible pivot Joint
-  createPivotJoint() {
-    if (this.debug)
-      this.addSizeArrows();
-    var radius = this.pivot.radius;
-    // height in normal "up" rotation
-    var height = this.size.z;
-    var r = this.getWorldRotationDeg();
-    // are we rotated in x direction (90 or 270 degrees)
-    if (Part.angleIsNear(r.y, 90, 270, 1)) {
-      height = this.size.x;
-    } else if (Part.angleIsNear(r.x, 90, 270, 1)) {
-      height = this.size.y;
-    }
-    var meshFactory = MeshFactory.getInstance();
-    // cylinder
-    var pivotJoint = meshFactory.createCylinder(
-      radius,
-      height,
-      true
-    );
-    // TODO use sphere when pivot can be rotated around all axes
-    // pivot=MeshFactory.getInstance().createSphere(pivotr,true);
-    pivotJoint.material.color.set(meshFactory.pivotColor);
-    return pivotJoint;
-  }
-
   // recursively get all parts
   getAllParts() {
     this.allParts = this.parts.slice(0); // clone the parts
@@ -482,14 +494,10 @@ class Part extends ChildPart {
     super.fullyLoaded();
     if (this.debug) {
       if (this.pivot !== null) {
-        var pivotJoint = this.createPivotJoint();
-        pivotJoint.name = this.name + "-pivot.Joint";
-        // for debugging
-        objects.push(pivotJoint);
-        this.pivot.mesh.add(pivotJoint);
+        this.pivot.createJoint();
         // show axes and bounding box wire frame for debugging
-        console.log("adding axes helper to joint/pivot " + this.name)
-        this.addAxesHelper(this.pivot.mesh);
+        console.log("adding axes helper to joint/pivot for" + this.name)
+        this.addAxesHelper(this.mesh);
       }
     }
   }
@@ -515,7 +523,7 @@ class Robot {
     this.rotateCounter = 0;
     this.partCount = 0;
     // disable robot until fully Loaded
-    this.enabled=false;
+    this.enabled = false;
     // make sure my parts know me
     for (var partIndex in parts) {
       var part = parts[partIndex];
@@ -626,7 +634,7 @@ class Robot {
       this.whenIntegrated();
     }
     // now we can enable the robot
-    this.enabled=true;
+    this.enabled = true;
   }
 
   // lookup a part by it's name
@@ -664,6 +672,7 @@ class Robot {
     console.log("preparing gui rendering options for " + this.name)
     for (var partsIndex in this.allParts) {
       var part = this.allParts[partsIndex];
+      // does the part have a pivot axes / joint / hinge?
       if (part.pivot !== null) {
         options[part.name + ".rx"] = part.pivot.rx;
         options[part.name + ".ry"] = part.pivot.ry;
