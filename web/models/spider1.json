@@ -1,0 +1,509 @@
+{
+  "name": "SpiderQ",
+  "url": "https://github.com/BITPlan/PI-Q-Robot/tree/master/web/models/stl",
+  "positioning": "absolute",
+  "parts": [{
+      "name": "body",
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "rx": 0,
+      "ry": 0,
+      "rz": 0,
+      "parts": [{
+          "name": "base",
+          "stl": "/models/stl/base.stl",
+          "x": 0,
+          "y": 92,
+          "z": 0,
+          "rx": 270,
+          "ry": 0,
+          "rz": 0
+        },
+        {
+          "name": "basec",
+          "stl": "/models/stl/batterycase.stl",
+          "x": 0,
+          "y": 120,
+          "z": 0,
+          "rx": 270,
+          "ry": 0,
+          "rz": 0
+        },
+        {
+          "name": "mg90s00",
+          "stl": "/models/stl/MG90S.stl",
+          "x": -43.7,
+          "y": 75,
+          "z": -40,
+          "rx": 90,
+          "ry": 0,
+          "rz": 180
+        },
+        {
+          "name": "mg90s01",
+          "stl": "/models/stl/MG90S.stl",
+          "x": 43.7,
+          "y": 75,
+          "z": -40,
+          "rx": 90,
+          "ry": 0,
+          "rz": 0
+        },
+        {
+          "name": "mg90s02",
+          "stl": "/models/stl/MG90S.stl",
+          "x": -43.7,
+          "y": 75,
+          "z": 40,
+          "rx": 90,
+          "ry": 0,
+          "rz": 180
+        },
+        {
+          "name": "mg90s03",
+          "stl": "/models/stl/MG90S.stl",
+          "x": 43.7,
+          "y": 75,
+          "z": 40,
+          "rx": 90,
+          "ry": 0,
+          "rz": 0
+        },
+        {
+          "name": "hinges00",
+          "stl": "/models/stl/hinge.stl",
+          "x": -50,
+          "y": 94,
+          "z": -39,
+          "rx": 90,
+          "ry": 270,
+          "rz": 0
+        },
+        {
+          "name": "hinges01",
+          "stl": "/models/stl/hinge.stl",
+          "x": 50,
+          "y": 94,
+          "z": -39,
+          "rx": 90,
+          "ry": 270,
+          "rz": 0
+        },
+        {
+          "name": "hinges02",
+          "stl": "/models/stl/hinge.stl",
+          "x": -50,
+          "y": 94,
+          "z": 39,
+          "rx": 90,
+          "ry": 90,
+          "rz": 180
+        },
+        {
+          "name": "hinges03",
+          "stl": "/models/stl/hinge.stl",
+          "x": 50,
+          "y": 94,
+          "z": 39,
+          "rx": 90,
+          "ry": 90,
+          "rz": 180
+        }
+      ]
+    },
+    {
+      "name": "coxa0",
+
+      "x": -50,
+      "y": 77,
+      "z": -41,
+      "rx": 0,
+      "ry": 0,
+      "rz": 0,
+      "parts": [{
+        "name": "coxapart0",
+        "stl": "/models/stl/coxa-b.stl",
+        "x": -56,
+        "y": 77,
+        "z": -50,
+        "rx": 90,
+        "ry": 0,
+        "rz": 135
+      }, {
+        "name": "mg90s10",
+        "stl": "/models/stl/MG90S.stl",
+        "x": -69,
+        "y": 75.5,
+        "z": -54,
+        "rx": 180,
+        "ry": 225,
+        "rz": 90
+      }, {
+        "name": "hinges10",
+        "stl": "/models/stl/hinge.stl",
+        "x": -55,
+        "y": 70,
+        "z": -67,
+        "rx": 90,
+        "ry": 180,
+        "rz": 45
+      }]
+    },
+    {
+      "name": "coxa1",
+      "joint": 4,
+      "x": 50,
+      "y": 77,
+      "z": -41,
+      "rx": 0,
+      "ry": 0,
+      "rz": 0,
+      "parts": [{
+          "name": "coxapart1",
+          "stl": "/models/stl/coxa-f.stl",
+          "x": 56,
+          "y": 77,
+          "z": -50,
+          "rx": 90,
+          "ry": 0,
+          "rz": 225
+        },
+        {
+          "name": "mg90s11",
+          "stl": "/models/stl/MG90S.stl",
+          "x": 69,
+          "y": 75.5,
+          "z": -54,
+          "rx": 180,
+          "ry": 135,
+          "rz": 90
+        },
+        {
+          "name": "hinges11",
+          "stl": "/models/stl/hinge.stl",
+          "x": 55,
+          "y": 70,
+          "z": -67,
+          "rx": 90,
+          "ry": 0,
+          "rz": 45
+        }
+      ]
+    },
+    {
+      "name": "coxa2",
+      "joint": 4,
+      "x": -50,
+      "y": 77,
+      "z": 41,
+      "rx": 0,
+      "ry": 0,
+      "rz": 0,
+      "parts": [{
+          "name": "coxapart2",
+          "stl": "/models/stl/coxa-b.stl",
+          "x": -61,
+          "y": 77,
+          "z": 47,
+          "rx": 90,
+          "ry": 0,
+          "rz": 45
+        },
+        {
+          "name": "mg90s12",
+          "stl": "/models/stl/MG90S.stl",
+          "x": -65,
+          "y": 75.5,
+          "z": 60,
+          "rx": 180,
+          "ry": 135,
+          "rz": 90
+        }, {
+          "name": "hinges12",
+          "stl": "/models/stl/hinge.stl",
+          "x": -76,
+          "y": 70,
+          "z": 44,
+          "rx": 90,
+          "ry": 180,
+          "rz": 135
+        }
+      ]
+    },
+    {
+      "name": "coxa3",
+      "joint": 4,
+      "x": 50,
+      "y": 77,
+      "z": 41,
+      "rx": 0,
+      "ry": 0,
+      "rz": 0,
+      "parts": [{
+          "name": "coxapart3",
+          "stl": "/models/stl/coxa-f.stl",
+          "x": 61,
+          "y": 77,
+          "z": 47,
+          "rx": 90,
+          "ry": 0,
+          "rz": 315
+        },
+
+        {
+          "name": "mg90s13",
+          "stl": "/models/stl/MG90S.stl",
+          "x": 65,
+          "y": 75.5,
+          "z": 60,
+          "rx": 180,
+          "ry": 225,
+          "rz": 90
+        },
+        {
+          "name": "hinges13",
+          "stl": "/models/stl/hinge.stl",
+          "x": 76,
+          "y": 70,
+          "z": 44,
+          "rx": 90,
+          "ry": 0,
+          "rz": 135
+        }
+      ]
+    },
+    {
+      "name": "femur0",
+      "joint": 4,
+      "x": -80,
+      "y": 69,
+      "z": -69,
+      "rx": 0,
+      "ry": 0,
+      "rz": 0,
+      "parts": [{
+        "name": "femurpart0",
+        "stl": "/models/stl/femur.stl",
+        "x": -80,
+        "y": 69,
+        "z": -69,
+        "rx": 90,
+        "ry": 180,
+        "rz": 225
+      }]
+    }, {
+      "name": "femur1",
+      "joint": 4,
+      "x": 82,
+      "y": 69,
+      "z": -70,
+      "rx": 0,
+      "ry": 0,
+      "rz": 0,
+      "parts": [{
+        "name": "femurpart1",
+        "stl": "/models/stl/femur.stl",
+        "x": 82,
+        "y": 69,
+        "z": -70,
+        "rx": 90,
+        "ry": 180,
+        "rz": 315
+      }]
+    },
+    {
+      "name": "femur2",
+      "joint": 4,
+      "x": -82,
+      "y": 69,
+      "z": 70,
+      "rx": 0,
+      "ry": 0,
+      "rz": 0,
+      "parts": [{
+        "name": "femurpart2",
+        "stl": "/models/stl/femur.stl",
+        "x": -82,
+        "y": 69,
+        "z": 70,
+        "rx": 90,
+        "ry": 180,
+        "rz": 315
+      }]
+    }, {
+      "name": "femur3",
+      "x": 82,
+      "y": 69,
+      "z": 70,
+      "rx": 0,
+      "ry": 0,
+      "rz": 0,
+      "parts": [{
+        "name": "femurpart3",
+        "joint": 4,
+        "stl": "/models/stl/femur.stl",
+        "x": 82,
+        "y": 69,
+        "z": 70,
+        "rx": 90,
+        "ry": 180,
+        "rz": 45
+      }]
+    },
+    {
+      "name": "tibia0",
+      "joint": 10,
+      "x": -90,
+      "y": 68.5,
+      "z": -80,
+      "rx": 0,
+      "ry": 0,
+      "rz": 0,
+      "parts": [{
+        "name": "tibiapart0",
+        "stl": "/models/stl/tibia-b.stl",
+        "x": -117,
+        "y": 68.5,
+        "z": -100,
+        "rx": 180,
+        "ry": 135,
+        "rz": 180
+      }, {
+        "name": "mg90s20",
+        "stl": "/models/stl/MG90S.stl",
+        "x": -94,
+        "y": 69,
+        "z": -89,
+        "rx": 180,
+        "ry": 45,
+        "rz": 0
+      }, {
+        "name": "hinges20",
+        "stl": "/models/stl/hinge.stl",
+        "x": -105,
+        "y": 69.5,
+        "z": -71,
+        "rx": 0,
+        "ry": 45,
+        "rz": 0
+      }]
+    },
+    {
+      "name": "tibia1",
+      "joint": 4,
+      "x": 110,
+      "y": 68.5,
+      "z": -106,
+      "rx": 0,
+      "ry": 0,
+      "rz": 0,
+      "parts": [{
+        "name": "tibiapart1",
+        "stl": "/models/stl/tibia-b.stl",
+        "x": 110,
+        "y": 68.5,
+        "z": -106,
+        "rx": 180,
+        "ry": 225,
+        "rz": 180
+      }, {
+        "name": "mg90s21",
+        "stl": "/models/stl/MG90S.stl",
+        "x": 102,
+        "y": 69,
+        "z": -81,
+        "rx": 180,
+        "ry": 135,
+        "rz": 0
+      }, {
+        "name": "hinges21",
+        "stl": "/models/stl/hinge.stl",
+        "x": 80,
+        "y": 69,
+        "z": -94,
+        "rx": 0,
+        "ry": 315,
+        "rz": 0
+      }]
+    }, {
+      "name": "tibia2",
+      "joint": 4,
+      "x": -122,
+      "y": 68.5,
+      "z": 100,
+      "rx": 0,
+      "ry": 0,
+      "rz": 0,
+      "parts": [{
+          "name": "tibiapart2",
+          "stl": "/models/stl/tibia-b.stl",
+          "x": -122,
+          "y": 68.5,
+          "z": 100,
+          "rx": 180,
+          "ry": 45,
+          "rz": 180
+        }, {
+          "name": "mg90s22",
+          "stl": "/models/stl/MG90S.stl",
+          "x": -95,
+          "y": 69,
+          "z": 90,
+          "rx": 180,
+          "ry": 135,
+          "rz": 180
+        },
+        {
+          "name": "hinges22",
+          "stl": "/models/stl/hinge.stl",
+          "x": -107,
+          "y": 69,
+          "z": 65,
+          "rx": 90,
+          "ry": 180,
+          "rz": 135
+        }
+      ]
+    }, {
+      "name": "tibia3",
+      "joint": 4,
+      "x": 122,
+      "y": 68.5,
+      "z": 100,
+      "rx": 0,
+      "ry": 0,
+      "rz": 0,
+      "parts": [{
+          "name": "tibiapart3",
+          "stl": "/models/stl/tibia-f.stl",
+          "x": 122,
+          "y": 68.5,
+          "z": 100,
+          "rx": 180,
+          "ry": 315,
+          "rz": 180
+        }, {
+          "name": "mg90s23",
+          "stl": "/models/stl/MG90S.stl",
+          "x": 95,
+          "y": 69,
+          "z": 87,
+          "rx": 180,
+          "ry": 225,
+          "rz": 0
+        },
+        {
+          "name": "hinges23",
+          "stl": "/models/stl/hinge.stl",
+          "x": 107,
+          "y": 69,
+          "z": 65,
+          "rx": 90,
+          "ry": 0,
+          "rz": 135
+        }
+      ]
+    }
+  ]
+}

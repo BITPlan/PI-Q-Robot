@@ -548,27 +548,11 @@ class Robot {
     SceneExporter.saveJSON(json, this.name + ".json");
   }
 
-  // rerrange
+  // rearrange
   rearrange() {
     console.log("rearranging ...");
     for (var partIndex in this.allParts) {
       var part = this.allParts[partIndex];
-      // add pivots to the coxas
-      if (part.name.match('(coxa|femur|tibia)[0-9]')) {
-        console.log("rearranging " + part.name);
-        part.pivot = new Pivot(part.name + "-pivot", part.x, part.y, part.z, part.rx, part.ry, part.rz);
-      }
-      // reparent tibias and femurs
-      var limbMatches=part.name.match('(tibia|femur)([0-9])');
-      if (limbMatches) {
-        var limbName=limbMatches[1];
-        var limbIndex=limbMatches[2];
-        var newParent='femur';
-        if (limbName==='femur')
-          newParent='coxa';
-        // make this limb a child of the newParent
-        part.reparent(newParent+limbIndex);
-      }
     }
     this.save();
   }
