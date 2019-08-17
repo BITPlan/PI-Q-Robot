@@ -82,7 +82,7 @@ gui.add(options, 'controls').listen();
 gui.add(options, 'debug').listen();
 gui.add(options, 'boxwires').listen();
 gui.add(options, 'rotation').listen();
-gui.add(options, 'rotateBy',{ Quarternion: 'Q', AxisAngle: 'A', Rotation: 'R' }).listen();
+gui.add(options, 'rotateBy',{ Rotation: 'R', AxisAngle: 'A', Pivot: 'P', Quarternion: 'Q'}).listen();
 gui.add(options, 'px', -200, 200).listen();
 gui.add(options, 'py', -200, 200).listen();
 gui.add(options, 'pz', -200, 200).listen();

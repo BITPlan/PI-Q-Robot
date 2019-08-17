@@ -79,6 +79,11 @@ class Pivot extends BasePart {
     this.part = part;
     this.radius = radius;
     // fields to be set later
+    // defaults will be overridden and are just for illustration/documentation
+    // what values to expect
+    this.angle=part.ry;
+    this.pivotAxisName='y';
+    this.pivotAxis=new THREE.Vector3(0,1,0);
   }
 
   // construct me from the given JSON Object o for the given part p
@@ -97,10 +102,12 @@ class Pivot extends BasePart {
   // add GUI options for this Pivot
   addGUI(gui, options) {
     var part = this.part;
+    options[part.name + ".angle"] = this.angle;
     options[part.name + ".rx"] = part.pivot.rx;
     options[part.name + ".ry"] = part.pivot.ry;
     options[part.name + ".rz"] = part.pivot.rz;
     // TODO make range configurable
+    gui.add(options, part.name + ".angle", -180, 180).listen();
     gui.add(options, part.name + ".rx", -180, 180).listen();
     gui.add(options, part.name + ".ry", -180, 180).listen();
     gui.add(options, part.name + ".rz", -180, 180).listen();
@@ -114,18 +121,17 @@ class Pivot extends BasePart {
       var rx = options[part.name + ".rx"];
       var ry = options[part.name + ".ry"];
       var rz = options[part.name + ".rz"];
-      // be careful when uncommenting this for debugging - this is triggered on every render request
-      // at the fps your computer is capable of
-      this.rotateCounter++;
-      /*
-      if (this.debug)
-        if (this.rotateCounter % 50 == 0)
-          logSelected("preRotate", mesh);
-      */
-      if (options.rotateBy == 'A') {
-        mesh.setRotationFromAxisAngle(xAxis, deg2rad(rx));
-        mesh.setRotationFromAxisAngle(yAxis, deg2rad(ry));
-        mesh.setRotationFromAxisAngle(zAxis, deg2rad(rz));
+      if (options.rotateBy == 'P') {
+        this.angle= options[part.name + ".angle"];
+        // only rotate if on y-axis
+        if (this.pivotAxisName=='y')
+          mesh.setRotationFromAxisAngle(this.pivotAxis, deg2rad(this.angle));
+        else
+          mesh.rotation.set(deg2rad(rx), deg2rad(ry), deg2rad(rz));
+      } else if (options.rotateBy == 'A') {
+        mesh.setRotationFromAxisAngle(xAxis,deg2rad(rx));
+        mesh.setRotationFromAxisAngle(yAxis,deg2rad(ry));
+        mesh.setRotationFromAxisAngle(zAxis,deg2rad(rz));
         // the rotateOnAxis is no good for static position it will create a dynamic effect
         //mesh.rotateOnAxis(xAxis,deg2rad(rx));
         //mesh.rotateOnAxis(yAxis,deg2rad(ry));
@@ -139,12 +145,28 @@ class Pivot extends BasePart {
         quaternion.setFromAxisAngle(yAxis, deg2rad(ry));
         mesh.position.applyQuaternion(quaternion);
       }
-      /*
-      if (this.debug)
-        if (this.rotateCounter % 50 == 0)
-          logSelected("postRotate", mesh);
-      */
     }
+  }
+
+  // calculate my rotation
+  calcRotation() {
+    var part = this.part;
+    var r = part.getWorldRotationDeg();
+    this.angle=part.ry;
+    this.pivotAxisName='y';
+    this.pivotAxis=new THREE.Vector3(0,1,0);
+    // are we rotated in x direction (90 or 270 degrees)
+    if (Part.angleIsNear(r.y, 90, 270, 1)) {
+      this.angle=part.rx;
+      //this.pivotAxisName='x';
+      //this.pivotAxis=new THREE.Vector3(1,0,0);
+    } else if (Part.angleIsNear(r.x, 90, 270, 1)) {
+      this.pivotAxisName='z';
+      this.angle=part.rz;
+      this.pivotAxis=new THREE.Vector3(0,0,1);
+    }
+    if (part.debug)
+      console.log("calc rotation: pivotAxis for "+this.name+" is "+this.pivotAxisName);
   }
 
   // create a visible pivot Joint
@@ -153,13 +175,12 @@ class Pivot extends BasePart {
       this.part.addSizeArrows();
     var radius = this.radius;
     var part = this.part;
+    this.calcRotation();
     // height in normal "up" rotation
-    var height = part.size.z;
-    var r = part.getWorldRotationDeg();
-    // are we rotated in x direction (90 or 270 degrees)
-    if (Part.angleIsNear(r.y, 90, 270, 1)) {
+    var height = part.size.y;
+    if (this.pivotAxisName=='x') {
       height = part.size.x;
-    } else if (Part.angleIsNear(r.x, 90, 270, 1)) {
+    } else if (this.pivotAxisName=='z') {
       height = part.size.y;
     }
     var meshFactory = MeshFactory.getInstance();
