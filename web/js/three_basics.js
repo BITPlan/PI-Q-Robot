@@ -185,6 +185,9 @@ var selectedObject;
 var objects = [];
 raycaster = new THREE.Raycaster();
 mouse = new THREE.Vector2();
+var zAxis = new THREE.Vector3(0, 0, 1);
+var yAxis = new THREE.Vector3(0, 1, 0);
+var xAxis = new THREE.Vector3(1, 0, 0);
 
 // https://stackoverflow.com/a/32038265/1497139
 THREE.Object3D.prototype.rotateAroundWorldAxis = function() {
