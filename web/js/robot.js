@@ -514,6 +514,8 @@ class Robot {
     this.partsLoaded = 0;
     this.rotateCounter = 0;
     this.partCount = 0;
+    // disable robot until fully Loaded
+    this.enabled=false;
     // make sure my parts know me
     for (var partIndex in parts) {
       var part = parts[partIndex];
@@ -629,9 +631,8 @@ class Robot {
 
   // callback when robot is fully loaded
   fullyLoaded() {
-    // make sure we render first
-    console.log("first render called")
-    render();
+    // do we need to update the scene before integrating?
+    // for the time being we assume it's not necessary
     // MeshFactory.getInstance().scene.updateMatrixWorld();
     for (var partIndex in this.parts) {
       this.parts[partIndex].fullyLoaded();
@@ -640,6 +641,8 @@ class Robot {
     if (this.whenIntegrated) {
       this.whenIntegrated();
     }
+    // now we can enable the robot
+    this.enabled=true;
   }
 
   // lookup a part by it's name
@@ -691,6 +694,8 @@ class Robot {
 
   // rotate the Joints of this robot
   rotateJoints(scene, options) {
+    if (!this.enabled)
+      return;
     // Rotate joints
     for (var partsIndex in this.allParts) {
       var part = this.allParts[partsIndex];
