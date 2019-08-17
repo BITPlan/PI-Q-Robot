@@ -75,8 +75,8 @@ class BasePart {
 class Pivot extends BasePart {
   // construct me with the given parameters
   constructor(part, x, y, z, rx, ry, rz, radius, debug = false) {
-    super(part.name+"-pivot", x, y, z, rx, ry, rz, debug);
-    this.part=part;
+    super(part.name + "-pivot", x, y, z, rx, ry, rz, debug);
+    this.part = part;
     this.radius = radius;
     // fields to be set later
   }
@@ -94,12 +94,65 @@ class Pivot extends BasePart {
     newParent.add(subject);
   }
 
+  // add GUI options for this Pivot
+  addGUI(gui, options) {
+    var part = this.part;
+    options[part.name + ".rx"] = part.pivot.rx;
+    options[part.name + ".ry"] = part.pivot.ry;
+    options[part.name + ".rz"] = part.pivot.rz;
+    // TODO make range configurable
+    gui.add(options, part.name + ".rx", -180, 180).listen();
+    gui.add(options, part.name + ".ry", -180, 180).listen();
+    gui.add(options, part.name + ".rz", -180, 180).listen();
+  }
+
+  // callback on render
+  onRender(scene, options) {
+    var mesh = this.mesh;
+    var part = this.part;
+    if (mesh) {
+      var rx = options[part.name + ".rx"];
+      var ry = options[part.name + ".ry"];
+      var rz = options[part.name + ".rz"];
+      // be careful when uncommenting this for debugging - this is triggered on every render request
+      // at the fps your computer is capable of
+      this.rotateCounter++;
+      /*
+      if (this.debug)
+        if (this.rotateCounter % 50 == 0)
+          logSelected("preRotate", mesh);
+      */
+      if (options.rotateBy == 'A') {
+        mesh.setRotationFromAxisAngle(xAxis, deg2rad(rx));
+        mesh.setRotationFromAxisAngle(yAxis, deg2rad(ry));
+        mesh.setRotationFromAxisAngle(zAxis, deg2rad(rz));
+        // the rotateOnAxis is no good for static position it will create a dynamic effect
+        //mesh.rotateOnAxis(xAxis,deg2rad(rx));
+        //mesh.rotateOnAxis(yAxis,deg2rad(ry));
+        //mesh.rotateOnAxis(zAxis,deg2rad(rz));
+      } else if (options.rotateBy == 'R') {
+        mesh.rotation.set(deg2rad(rx), deg2rad(ry), deg2rad(rz));
+      } else if (options.rotateBy == 'Q') {
+        // https://codepen.io/luics/pen/GEbOYO
+        // could be just one instance for memory performance
+        var quaternion = new THREE.Quaternion();
+        quaternion.setFromAxisAngle(yAxis, deg2rad(ry));
+        mesh.position.applyQuaternion(quaternion);
+      }
+      /*
+      if (this.debug)
+        if (this.rotateCounter % 50 == 0)
+          logSelected("postRotate", mesh);
+      */
+    }
+  }
+
   // create a visible pivot Joint
   createPivotJoint() {
     if (this.debug)
       this.part.addSizeArrows();
     var radius = this.radius;
-    var part=this.part;
+    var part = this.part;
     // height in normal "up" rotation
     var height = part.size.z;
     var r = part.getWorldRotationDeg();
@@ -520,7 +573,8 @@ class Robot {
     this.whenIntegrated = null;
     this.partsIntegrated = 0;
     this.partsLoaded = 0;
-    this.rotateCounter = 0;
+    // how often has this robot been rendered?
+    this.renderCounter = 0;
     this.partCount = 0;
     // disable robot until fully Loaded
     this.enabled = false;
@@ -674,62 +728,22 @@ class Robot {
       var part = this.allParts[partsIndex];
       // does the part have a pivot axes / joint / hinge?
       if (part.pivot !== null) {
-        options[part.name + ".rx"] = part.pivot.rx;
-        options[part.name + ".ry"] = part.pivot.ry;
-        options[part.name + ".rz"] = part.pivot.rz;
-        // TODO make range configurable
-        gui.add(options, part.name + ".rx", -180, 180).listen();
-        gui.add(options, part.name + ".ry", -180, 180).listen();
-        gui.add(options, part.name + ".rz", -180, 180).listen();
+        part.pivot.addGUI(gui, options);
       }
     }
   }
 
-  // rotate the Joints of this robot
-  rotateJoints(scene, options) {
+  // callBack when scene is rendered
+  onRender(scene, options) {
     if (!this.enabled)
       return;
     // Rotate joints
     for (var partsIndex in this.allParts) {
       var part = this.allParts[partsIndex];
       if (part.pivot !== null) {
-        var mesh = scene.getObjectByName(part.name + "-pivot");
-        if (mesh) {
-          var rx = options[part.name + ".rx"];
-          var ry = options[part.name + ".ry"];
-          var rz = options[part.name + ".rz"];
-          // be careful when uncommenting this for debugging - this is triggered on every render request
-          // at the fps your computer is capable of
-          this.rotateCounter++;
-          /*
-          if (this.debug)
-            if (this.rotateCounter % 50 == 0)
-              logSelected("preRotate", mesh);
-          */
-          if (options.rotateBy == 'A') {
-            mesh.setRotationFromAxisAngle(xAxis, deg2rad(rx));
-            mesh.setRotationFromAxisAngle(yAxis, deg2rad(ry));
-            mesh.setRotationFromAxisAngle(zAxis, deg2rad(rz));
-            // the rotateOnAxis is no good for static position it will create a dynamic effect
-            //mesh.rotateOnAxis(xAxis,deg2rad(rx));
-            //mesh.rotateOnAxis(yAxis,deg2rad(ry));
-            //mesh.rotateOnAxis(zAxis,deg2rad(rz));
-          } else if (options.rotateBy == 'R') {
-            mesh.rotation.set(deg2rad(rx), deg2rad(ry), deg2rad(rz));
-          } else if (options.rotateBy == 'Q') {
-            // https://codepen.io/luics/pen/GEbOYO
-            // could be just one instance for memory performance
-            var quaternion = new THREE.Quaternion();
-            quaternion.setFromAxisAngle(yAxis, deg2rad(ry));
-            mesh.position.applyQuaternion(quaternion);
-          }
-          /*
-          if (this.debug)
-            if (this.rotateCounter % 50 == 0)
-              logSelected("postRotate", mesh);
-          */
-        }
+        part.pivot.onRender(scene,options);
       }
-    }
-  }
+      this.renderCounter++;
+    } // for
+  } // onRender
 } // Robot

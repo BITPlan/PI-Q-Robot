@@ -199,7 +199,7 @@ var render = function() {
 
   if (options.rotation) {
     if (robot)
-      robot.rotateJoints(scene, options);
+      robot.onRender(scene, options);
   }
   movep = selectedObject;
   if (movep) {
