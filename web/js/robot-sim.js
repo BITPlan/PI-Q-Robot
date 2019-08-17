@@ -8,21 +8,23 @@ var scene, plane, camera, light0, light1, light2, light3, renderer, options, gui
 
 
 // setUp scene, camera and lights
-function setUp() {
+function setUp(options) {
   scene = createScene(near, far, color);
   plane = createPlane(far / 2, far / 2, 0, 0, 0);
   scene.add(plane);
   plane.receiveShadow = true;
 
-  var axesHelper = new THREE.AxesHelper(far / 2);
-  scene.add(axesHelper);
   camera = createCamera(near, far);
+  if (options.axesHelper) {
+    var axesHelper = new THREE.AxesHelper(far / 2);
+    scene.add(axesHelper);
+  }
 
   // https://www.w3schools.com/colors/colors_picker.asp
   light0 = new THREE.HemisphereLight(0x443333, 0x111122);
   scene.add(light0);
-  light1 = addShadowedLight(420, 380, 450, 0xffffff, 1.0, 1, far * 1.5, 150);
-  light2 = addShadowedLight(250, 250, -350, 0xffaa00, 0.1, 1, far * 1.5, 150);
+  light1 = addShadowedLight(420, 380, 450, 0xffffff, 1.0, 1, far * 1.5, 150,options.lightDebug);
+  light2 = addShadowedLight(250, 250, -350, 0xffaa00, 0.1, 1, far * 1.5, 150,options.lightDebug);
 
   light3 = new THREE.AmbientLight(0xffffff, 0.5);
   scene.add(light3);
@@ -62,6 +64,7 @@ function setDefaultOptions() {
     rotation: true,
     debug: false,
     axesHelper: true,
+    lightDebug: false,
     boxwires: true,
     rotateBy: 'R',
     x: 0,
@@ -106,6 +109,7 @@ function prepareGUI() {
   debugFolder.add(options, 'debug').listen();
   debugFolder.add(options, 'boxwires').listen();
   debugFolder.add(options, 'axesHelper').listen();
+  debugFolder.add(options, 'lightDebug').listen();
   debugFolder.add(options, 'rotation').listen();
 
   gui.add(options, 'rotateBy', {
@@ -224,14 +228,15 @@ function loadRobot() {
 
 // Rendering
 function init(withOptions) {
-  // prepare Scene
-  setUp();
   if (withOptions) {
     setDefaultOptions();
   } else {
     gui.destroy();
   }
   gui = new dat.GUI();
+  // prepare Scene
+  setUp(options);
+
   prepareGUI();
   if (withOptions) {
     prepareRenderer();

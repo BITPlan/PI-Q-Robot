@@ -295,12 +295,14 @@ function addDragControls(objects) {
   });
 }
 
-function addShadowedLight(x, y, z, color, intensity, near, far, d) {
+function addShadowedLight(x, y, z, color, intensity, near, far, d, debug=false) {
   var directionalLight = new THREE.DirectionalLight(color, intensity);
   directionalLight.position.set(x, y, z);
   scene.add(directionalLight);
-  var helper = new THREE.DirectionalLightHelper(directionalLight, 5);
-  scene.add(helper);
+  if (debug) {
+    var helper = new THREE.DirectionalLightHelper(directionalLight, 5);
+    scene.add(helper);
+  }
   directionalLight.castShadow = true;
   directionalLight.shadow.camera.left = -d;
   directionalLight.shadow.camera.right = d;
