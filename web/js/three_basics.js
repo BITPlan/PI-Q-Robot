@@ -27,6 +27,12 @@ class MeshFactory {
     return this.createMesh(cylinderGeometry, cloneMaterial);
   }
 
+  // creates a cube with the given width, height and depth
+  createCube(width,height,depth, cloneMaterial=false) {
+    var boxGeometry=new THREE.BoxGeometry(width,height,depth);
+    return this.createMesH(boxGeometry,cloneMaterial);
+  }
+
   // creates a sphere with given radius and height
   createSphere(radius, cloneMaterial = false) {
     var sphereGeometry = new THREE.SphereGeometry(
