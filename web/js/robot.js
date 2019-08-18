@@ -1,5 +1,6 @@
-// a part has a name and position and rotation vector coordinates
+// a part has a namem, position x,y,z and rotation vector coordinates rx,ry,rz
 class BasePart {
+  // construct me from the given parameters
   constructor(name, x, y, z, rx, ry, rz, debug = false) {
     this.name = name;
     this.x = x;
@@ -32,6 +33,21 @@ class BasePart {
     return this.rotationDeg;
   }
 
+  // initialize the mesh for this part
+  initializeMesh(mesh) {
+    // add bidirectional references from mesh to part
+    this.mesh = mesh;
+    // name the mesh so that we can do lookups by name
+    mesh.name = this.name;
+    // position and rotate mesh as requested
+    mesh.position.set(this.x, this.y, this.z);
+    mesh.rotation.set(deg2rad(this.rx), deg2rad(this.ry), deg2rad(this.rz));
+    // mesh.scale.set(0.5, 0.5, 0.5);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+  }
+
+  // if we have just been loaded or otherwise created
   onCreate(mesh) {
     this.initializeMesh(mesh);
     // does this part have a pivot?
@@ -54,20 +70,6 @@ class BasePart {
     }
   }
 
-  // initialize the mesh for this part
-  initializeMesh(mesh) {
-    // add bidirectional references from mesh to part
-    this.mesh = mesh;
-    // make the part available in the userdata of the mesh
-    mesh.userData['part'] = this.name;
-    mesh.name = this.name;
-    // position and rotate mesh as requested
-    mesh.position.set(this.x, this.y, this.z);
-    mesh.rotation.set(deg2rad(this.rx), deg2rad(this.ry), deg2rad(this.rz));
-    // mesh.scale.set(0.5, 0.5, 0.5);
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
-  }
 }
 
 // rotation joint
@@ -84,6 +86,7 @@ class Pivot extends BasePart {
     this.angle = part.ry;
     this.pivotAxisName = 'y';
     this.pivotAxis = new THREE.Vector3(0, 1, 0);
+    this.pivotEnabled=true;
   }
 
   // construct me from the given JSON Object o for the given part p
@@ -102,7 +105,15 @@ class Pivot extends BasePart {
   // add GUI options for this Pivot
   addGUI(gui, options) {
     var part = this.part;
-    if (options.rotateBy == 'P') {
+    if (options.rotateBy == 'P' || options.rotateBy=='T') {
+      if (options.rotateBy == 'T') {
+        options[part.name + ".axis"] = this.pivotAxisName;
+        gui.add(options, part.name + ".axis").listen();
+        this.pivotEnabled=false;
+        this.angle=0;
+        options[part.name + ".enabled"] = this.pivotEnabled;
+        gui.add(options, part.name + ".enabled").listen();
+      }
       options[part.name + ".angle"] = this.angle;
       gui.add(options, part.name + ".angle", -180, 180).listen();
     } else {
@@ -121,12 +132,18 @@ class Pivot extends BasePart {
     var mesh = this.mesh;
     var part = this.part;
     if (mesh) {
-
-      if (options.rotateBy == 'P') {
+      if (options.rotateBy == 'P' || options.rotateBy=='T')  {
         this.angle = options[part.name + ".angle"];
-        // only rotate if on y-axis
-        if (this.pivotAxisName == 'y')
-          mesh.setRotationFromAxisAngle(this.pivotAxis, deg2rad(this.angle));
+        if (options.rotateBy == 'P') {
+           mesh.setRotationFromAxisAngle(this.pivotAxis, deg2rad(this.angle));
+        }
+        if (options.rotateBy == 'T') {
+          this.enabled=options[part.name + ".enabled"];
+          if (this.enabled) {
+            // then extra rotation as set
+            mesh.setRotationFromAxisAngle(this.pivotAxis, deg2rad(this.angle));
+          }
+        }
       } else {
         var rx = options[part.name + ".rx"];
         var ry = options[part.name + ".ry"];
@@ -162,8 +179,9 @@ class Pivot extends BasePart {
     // are we rotated in x direction (90 or 270 degrees)
     if (Part.angleIsNear(r.y, 90, 270, 1)) {
       this.angle = part.rx;
-      //this.pivotAxisName='x';
-      //this.pivotAxis=new THREE.Vector3(1,0,0);
+      this.pivotAxisName='x';
+      // y-Axis
+      this.pivotAxis=new THREE.Vector3(0,1,0);
     } else if (Part.angleIsNear(r.x, 90, 270, 1)) {
       this.pivotAxisName = 'z';
       this.angle = part.rz;
@@ -175,7 +193,7 @@ class Pivot extends BasePart {
 
   // create a visible pivot Joint
   createPivotJoint() {
-    if (this.debug)
+    if (this.part.debug)
       this.part.addSizeArrows();
     var radius = this.radius;
     var part = this.part;
@@ -260,6 +278,7 @@ class ChildPart extends BasePart {
     if (length == 0) {
       console.log("error: length of bounding box vector of " + this.name + " is zero");
     }
+    // remember my size
     this.mesh.userData['size'] = this.size;
     if (this.debug) {
       console.log(
@@ -393,7 +412,7 @@ class ChildPart extends BasePart {
       console.log('error: parentMesh ' + this.parent + ' not available yet for ' + this.name);
       return;
     }
-    var parentPart = this.robot.getPartByName(parentMesh.userData['part']);
+    var parentPart = this.robot.getPartByName(parentMesh.name);
     return parentPart;
   }
 
@@ -511,6 +530,7 @@ class Part extends ChildPart {
     }
   }
 
+  // add an Arrow with the given direction dir length len and color
   addArrow(dir, len, color) {
     // see e.g. https://codepen.io/arpo/pen/LkXYGQ/?editors=0010
     var arrow = new THREE.ArrowHelper(dir, this.pivot.mesh.position, len, color);
@@ -518,7 +538,9 @@ class Part extends ChildPart {
     this.mesh.add(arrow);
   }
 
+  // add size Arrows according to the Axis
   addSizeArrows() {
+    // FIXME - shall we rely on the global defined Axis vectors?
     var xa = new THREE.Vector3(1, 0, 0);
     var ya = new THREE.Vector3(0, 1, 0);
     var za = new THREE.Vector3(0, 0, 1);
