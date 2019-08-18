@@ -30,7 +30,7 @@ class MeshFactory {
   // creates a cube with the given width, height and depth
   createCube(width,height,depth, cloneMaterial=false) {
     var boxGeometry=new THREE.BoxGeometry(width,height,depth);
-    return this.createMesH(boxGeometry,cloneMaterial);
+    return this.createMesh(boxGeometry,cloneMaterial);
   }
 
   // creates a sphere with given radius and height
