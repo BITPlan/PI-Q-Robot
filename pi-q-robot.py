@@ -1,6 +1,6 @@
 # Spider
-# WF 2019-07-09
-# WF 2019-07-26
+# WF 2019-07
+# WF 2020-01
 from flask import Flask, request, render_template, send_from_directory, abort
 from flask_restful import Resource, Api
 import json
@@ -31,22 +31,37 @@ api = Api(app)
 
 class Servo:
     """ I am a single Servo motor """
-    def __init__(self, id,inverted=False):
+    debug=True
+    servos={}
+
+    def __init__(self, id,name,inverted=False,speed=0.1/60):
         self.id = id
+        self.name=name
         self.inverted=inverted
+        # secs per degree
+        self.speed=speed
+        # we assume we start in a middle position
+        self.angle=90
+        Servo.servos[self.id]=self
 
     def setAngle(self, angle):
-        self.angle = angle
         trueAngle=180-angle if self.inverted else angle
         if kit is not None:
+            # set the trueAngle
             kit.servo[self.id].angle = trueAngle
+            movedAngle=abs(angle-self.angle)
+            moveTimeSecs=movedAngle*self.speed
+            if Servo.debug:
+                print("waiting %.0f msecs for servo %d: %s to move from %d to %d" % (moveTimeSecs*1000,self.id,self.name,self.angle,angle))
+            time.sleep(moveTimeSecs)
+        self.angle = angle
         return trueAngle
 
 class Extremity:
     """ I am a single extrimity of the spider  e.g. coxa, femur or tibia of one of the legs"""
     def __init__(self, name, id,inverted=False):
         self.name = name
-        self.servo = Servo(id,inverted)
+        self.servo = Servo(id,self.name,inverted)
 
     def setAngle(self, angle):
         self.servo.setAngle(angle)
@@ -55,19 +70,23 @@ class Leg:
     """ I am a single leg of the spider consisting of coxa, femur and tibia"""
     def __init__(self, legId,coxaId, femurId, tibiaId):
         self.legId=legId
-        self.coxa = Extremity('coxa', coxaId)
-        self.femur = Extremity('femur', femurId,legId>=2)
-        self.tibia = Extremity('tibia', tibiaId,legId>=2)
+        self.coxa = Extremity('coxa leg %d' % legId, coxaId)
+        self.femur = Extremity('femur leg %d' % legId, femurId,legId<2)
+        self.tibia = Extremity('tibia leg %d' % legId, tibiaId,legId<2)
 
-    def stand(self):
-        self.coxa.setAngle(90)
-        self.femur.setAngle(45)
-        self.tibia.setAngle(55)
+    def stand(self,step):
+        if step==0:
+           self.coxa.setAngle(90)
+           self.femur.setAngle(45) # slightly up
+           self.tibia.setAngle(120) # slightly up
+        elif step==1:
+           self.femur.setAngle(60) # slightly up
+           self.tibia.setAngle(90) # slightly up
 
     def sit(self):
-        self.coxa.setAngle(90)
-        self.femur.setAngle(90)
-        self.tibia.setAngle(0)
+        self.coxa.setAngle(90)   # 45° 
+        self.femur.setAngle(90)  # flat
+        self.tibia.setAngle(150)  # flat
 
 class Spider:
     """ I am a quadruped spider with four legs consisting of coxa, femur and tibia each"""
@@ -78,10 +97,11 @@ class Spider:
         self.rr = Leg(3, 9, 10, 11)
 
     def stand(self):
-        self.fl.stand()
-        self.fr.stand()
-        self.rl.stand()
-        self.rr.stand()
+        for step in range(2):
+          self.fl.stand(step)
+          self.fr.stand(step)
+          self.rl.stand(step)
+          self.rr.stand(step)
 
     def sit(self):
         self.fl.sit()
@@ -92,7 +112,6 @@ class Spider:
 spider = Spider()
 actions = ['stand', 'sit', 'forward', 'back',
            'right', 'left', 'hand shake', 'hand wave']
-
 
 @app.route("/")
 def index():
@@ -119,10 +138,10 @@ def index(msg):
 
 @app.route("/servo/<int:servoId>/<int:angle>", methods=['GET'])
 def setservo(servoId,angle):
-    msg="setting servo %d to angle %d" % (servoId,angle)
-    print (msg)
-    servo = Servo(servoId)
+    servo = Servo.servos[servoId]
     trueAngle=servo.setAngle(angle)
+    msg="setting servo %d:%s to angle %d° trueAngle %d°" % (servoId,servo.name,angle,trueAngle)
+    print (msg)
     json="{ id: %d, angle: %d, trueAngle: %d}" % (servoId,angle,trueAngle)
     return json
 
