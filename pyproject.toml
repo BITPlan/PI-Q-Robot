@@ -22,6 +22,8 @@ dependencies = [
   "Flask-RESTful",
   "PyYAML",
   "jsons",
+  "nicegui>=2.20.0",
+  "ngwidgets>=0.26.0",
 ]
 
 classifiers = [
@@ -68,3 +70,6 @@ only-include = ["piqrobot"]
 
 [tool.black]
 line-length = 120
+
+[project.scripts]
+pi-q-robot = "piqrobot.cmd:main"
