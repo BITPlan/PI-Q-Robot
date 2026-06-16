@@ -201,6 +201,6 @@ class Robot:
     def models_dir() -> str:
         """Return the absolute path to the bundled web/models directory."""
         here = os.path.dirname(os.path.abspath(__file__))
-        # web assets live alongside the original Flask app at the repo root
+        # web assets live at the repo root next to the piqrobot package
         path = os.path.join(here, "..", "web", "models")
         return os.path.abspath(path)

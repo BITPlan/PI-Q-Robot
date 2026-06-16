@@ -11,9 +11,11 @@ Created on 2026-06-16
 @author: wf
 """
 
+import json
 import os
 from typing import Optional
 
+from fastapi.responses import HTMLResponse
 from ngwidgets.input_webserver import InputWebserver, InputWebSolution
 from ngwidgets.webserver import WebserverConfig
 from nicegui import Client, app, ui
@@ -45,6 +47,65 @@ class PiQRobotWebServer(InputWebserver):
         web_dir = PiQRobotWebServer.web_path()
         if os.path.isdir(web_dir):
             app.add_static_files("/models", os.path.join(web_dir, "models"))
+            app.add_static_files("/js", os.path.join(web_dir, "js"))
+            app.add_static_files("/css", os.path.join(web_dir, "css"))
+
+        @app.get("/example/{example}")
+        def show_example(example: str):
+            """Serve a standalone three.js demo page (cubes, robot, shadow)."""
+            return PiQRobotWebServer.render_example(example)
+
+    @classmethod
+    def examples_path(cls) -> str:
+        here = os.path.dirname(os.path.abspath(__file__))
+        return os.path.abspath(os.path.join(here, "..", "examples"))
+
+    # scripts shared by every three.js demo page (formerly templates/js.html)
+    DEMO_SCRIPTS = [
+        "https://cdnjs.cloudflare.com/ajax/libs/three.js/107/three.min.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.6/dat.gui.min.js",
+        "/js/libs/stats.min.js",
+        "/js/exporters/GLTFExporter.js",
+        "/js/controls/TrackballControls.js",
+        "/js/controls/OrbitControls.js",
+        "/js/controls/DragControls.js",
+        "/js/STLLoader.js",
+        "/js/three_basics.js",
+        "/js/three-setup.js",
+        "/js/robot.js",
+    ]
+
+    @classmethod
+    def render_example(cls, example: str) -> HTMLResponse:
+        """Render the three.js demo page for the given example name.
+
+        Replaces the old Flask /example/<name> route + templates/trial.html.
+        Reads examples/<name>.json ({title, js}) and emits a minimal HTML
+        shell that loads the shared three.js libs and the demo script.
+        """
+        json_file = os.path.join(cls.examples_path(), f"{example}.json")
+        if not os.path.isfile(json_file):
+            return HTMLResponse(content=f"unknown example {example}", status_code=404)
+        with open(json_file, "r", encoding="utf-8") as fh:
+            example_obj = json.load(fh)
+        title = example_obj.get("title", example)
+        demo_js = example_obj.get("js", "")
+        scripts = "\n    ".join(f"<script src='{src}'></script>" for src in cls.DEMO_SCRIPTS)
+        html = f"""<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset=utf-8>
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link type="text/css" rel="stylesheet" href="/css/main.css">
+    <title>{title}</title>
+    <style>html, body {{ margin: 0; padding: 0; overflow: hidden; }}</style>
+  </head>
+  <body>
+    {scripts}
+    <script src='{demo_js}'></script>
+  </body>
+</html>"""
+        return HTMLResponse(content=html)
 
     @classmethod
     def web_path(cls) -> str:

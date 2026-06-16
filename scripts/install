@@ -22,4 +22,3 @@ esac
 $pip --version
 echo "installing required python modules with useroption $useroption"
 $pip install $useroption .
-if [ -f requirements.txt ]; then $pip install $useroption -r requirements.txt; fi

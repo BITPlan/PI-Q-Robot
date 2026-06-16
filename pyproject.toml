@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "pi-q-robot"
 description = "Raspberry PI controlled Quadruped Robot with 3D Simulator."
-keywords = ["raspberry-pi", "robot", "quadruped", "servo", "simulator", "flask"]
+keywords = ["raspberry-pi", "robot", "quadruped", "servo", "simulator", "nicegui"]
 authors = [
   { name = "Wolfgang Fahl", email = "wf@WolfgangFahl.com" }
 ]
@@ -18,10 +18,6 @@ requires-python = ">=3.10"
 dynamic = ["version"]
 
 dependencies = [
-  "Flask",
-  "Flask-RESTful",
-  "PyYAML",
-  "jsons",
   "nicegui>=2.20.0",
   "ngwidgets>=0.26.0",
 ]

@@ -26,27 +26,30 @@ Raspberry PI controlled Quadruped Robot with 3D Simulator.
 
 ## Structure
 ```
-pi-q-robot.py        # Flask app, REST API and robot domain model
-web/                 # static frontend (3D simulator, models, JS)
-templates/           # Jinja2 templates (index.html, trial.html, ...)
-examples/            # example robot definitions (*.json)
-install              # install prerequisites (port/apt + pip)
+piqrobot/            # the NiceGUI/ngwidgets application package
+  __init__.py        # version string
+  version.py         # Version metadata
+  cmd.py             # CLI entry point (pi-q-robot)
+  webserver.py       # PiQRobotWebServer/PiQRobotSolution (ui.scene + joint sliders)
+  robot_scene.py     # data-driven JSON->ui.scene walker (Part/Pivot/Robot)
+  servo.py           # Servo/Extremity/Leg/Spider hardware domain model
+web/models/          # robot model definitions (*.json) + STL meshes
+web/js, web/css      # three.js demo assets (served for /example/<name>)
+examples/            # three.js demo stubs (cubes, robot, shadow)
+install              # install prerequisites (port/apt + pip install .)
 run                  # start server/client (port 5002)
 gn                   # helper: move latest SpiderQ*.json into web/models
-requirements.txt     # legacy deps (superseded by pyproject.toml)
 ```
 
-## Key Classes (pi-q-robot.py)
-- `Servo` — a single servo motor; `setAngle` honors inversion and simulated move timing; registry in `Servo.servos`
-- `Extremity` — a coxa, femur or tibia; wraps one `Servo`
-- `Leg` — coxa + femur + tibia; `stand(step)` and `sit()` pose helpers
-- `Spider` — quadruped with four `Leg`s (fl, fr, rl, rr); `stand()` and `sit()`
+## Key Classes
+- `piqrobot.servo`: `Servo` (single motor, `setAngle` honors inversion/sim timing), `Extremity`, `Leg` (`stand`/`sit`), `Spider` (four legs fl,fr,rl,rr)
+- `piqrobot.robot_scene`: `Part`/`Pivot`/`Robot` — load a robot model JSON into a nested `ui.scene` group hierarchy; `set_joint_angle` rotates a joint
+- `piqrobot.webserver`: `PiQRobotWebServer` (ngwidgets `InputWebserver`) + `PiQRobotSolution` (3D simulator UI)
 
-## REST / Routes (Flask)
-- `GET  /` — index page with available actions
-- `GET  /example/<example>` — render example robot definition from examples/<example>.json
-- `GET  /servo/<servoId>/<angle>` — set a servo angle
-- `POST /action` — perform an action (stand, sit, ...)
+## Routes (NiceGUI/ngwidgets)
+- `/` — 3D robot simulator (model selector + ui.scene + per-joint sliders)
+- `GET /example/<example>` — standalone three.js demo page from examples/<example>.json
+- static: `/models`, `/js`, `/css`
 
 Servo hardware via `adafruit_servokit` only on Raspberry PI; otherwise servos are simulated.
 
