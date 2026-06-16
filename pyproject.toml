@@ -1,0 +1,70 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pi-q-robot"
+description = "Raspberry PI controlled Quadruped Robot with 3D Simulator."
+keywords = ["raspberry-pi", "robot", "quadruped", "servo", "simulator", "flask"]
+authors = [
+  { name = "Wolfgang Fahl", email = "wf@WolfgangFahl.com" }
+]
+maintainers = [
+  { name = "Wolfgang Fahl", email = "wf@WolfgangFahl.com" }
+]
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.10"
+dynamic = ["version"]
+
+dependencies = [
+  "Flask",
+  "Flask-RESTful",
+  "PyYAML",
+  "jsons",
+]
+
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "License :: OSI Approved :: Apache Software License",
+  "Operating System :: OS Independent",
+  "Intended Audience :: Developers",
+  "Topic :: Scientific/Engineering",
+  "Topic :: Software Development :: Embedded Systems"
+]
+
+[project.urls]
+Home = "https://github.com/BITPlan/PI-Q-Robot"
+Documentation = "http://wiki.bitplan.com/index.php/Raspberry_PI_Spiderbot"
+Source = "https://github.com/BITPlan/PI-Q-Robot"
+
+[project.optional-dependencies]
+test = [
+  "pytest>=8.4.0",
+  "green>=3.3.0",
+  "tox>=4.15.0",
+]
+dev = [
+  "black>=25.1.0",
+  "isort>=6.0.1",
+]
+
+[tool.hatch.version]
+path = "piqrobot/__init__.py"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+only-include = ["piqrobot"]
+
+[tool.hatch.build.targets.wheel.sources]
+"piqrobot" = "piqrobot"
+
+[tool.black]
+line-length = 120

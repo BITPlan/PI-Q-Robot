@@ -1,0 +1,25 @@
+#!/bin/bash
+# WF 2026-06-16
+os=$(uname -a)
+useroption="--user"
+
+case $os in
+  Darwin*)
+   pip="pip3"
+   install="sudo port install"
+   ;;
+  *)
+   pip="pip3"
+   if [ -n "$GHACTIONS" ]
+   then
+     # github actions environment
+     pip="pip"
+     useroption=""
+   fi
+   install="sudo apt-get install"
+   ;;
+esac
+$pip --version
+echo "installing required python modules with useroption $useroption"
+$pip install $useroption .
+if [ -f requirements.txt ]; then $pip install $useroption -r requirements.txt; fi
